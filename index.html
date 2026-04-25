@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Night Jeopardy</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=Averia+Libre:ital,wght@0,400;0,700;1,400&family=Anton&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow: #FFDC03;
+    --yellow-dark: #e6c800;
+    --black: #1a1a1a;
+    --white: #ffffff;
+    --off-white: #F0EEE2;
+    --green: #22c55e;
+    --green-dark: #15803d;
+    --red: #ef4444;
+    --red-dark: #b91c1c;
+    --purple: #9155F1;
+    --pink: #FFA3E8;
+    --teal: #8BCAC6;
+    --orange: #FF9900;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    color: var(--black);
+    overflow-x: hidden;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── TITLE SCREEN ── */
+  #screen-title {
+    background: var(--yellow);
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  #screen-title .arrow-decor {
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 380px; height: 380px;
+    opacity: 0.18;
+  }
+  #screen-title h1 {
+    font-family: 'Anton', sans-serif;
+    font-size: 96px;
+    line-height: 1.0;
+    color: var(--black);
+    position: relative; z-index: 1;
+    margin-top: 60px;
+  }
+  #screen-title h1 span { display: block; font-size: 72px; }
+  #screen-title .sub {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 18px; letter-spacing: 3px;
+    color: var(--black); margin-top: 24px;
+    position: relative; z-index: 1;
+  }
+  #screen-title .start-btn {
+    margin-top: 60px;
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 22px; font-weight: 700;
+    border: none; padding: 18px 52px;
+    cursor: pointer; letter-spacing: 2px;
+    transition: transform 0.1s, background 0.15s;
+    position: relative; z-index: 1;
+  }
+  #screen-title .start-btn:hover { background: #333; transform: scale(1.03); }
+  #screen-title .start-btn:active { transform: scale(0.97); }
+
+  /* ── PLAYER SETUP SCREEN ── */
+  #screen-setup {
+    background: var(--yellow);
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    gap: 32px;
+  }
+  #screen-setup h2 {
+    font-family: 'Anton', sans-serif;
+    font-size: 52px;
+    color: var(--black);
+    letter-spacing: 2px;
+    text-align: center;
+  }
+  .setup-subtitle {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px; letter-spacing: 2px;
+    color: rgba(0,0,0,0.55); text-align: center;
+  }
+  .player-count-row {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    justify-content: center; margin-top: 8px;
+  }
+  .player-count-btn {
+    width: 72px; height: 72px;
+    border: 3px solid var(--black);
+    background: var(--white);
+    font-family: 'Anton', sans-serif;
+    font-size: 32px; cursor: pointer;
+    transition: all 0.12s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .player-count-btn:hover, .player-count-btn.active {
+    background: var(--black); color: var(--yellow);
+  }
+  .player-names-area {
+    display: flex; flex-direction: column; gap: 12px;
+    width: 100%; max-width: 400px;
+  }
+  .player-name-input {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .player-name-input label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; letter-spacing: 2px;
+    min-width: 80px; color: var(--black);
+  }
+  .player-name-input input {
+    flex: 1;
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 18px; font-weight: 700;
+    border: 3px solid var(--black);
+    background: var(--white);
+    padding: 10px 14px;
+    outline: none;
+    color: var(--black);
+  }
+  .player-name-input input:focus { background: var(--off-white); }
+  .setup-start-btn {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 20px; font-weight: 700;
+    border: none; padding: 16px 48px;
+    cursor: pointer; letter-spacing: 2px;
+    transition: transform 0.1s, background 0.15s;
+    margin-top: 8px;
+  }
+  .setup-start-btn:hover { background: #333; transform: scale(1.03); }
+  .setup-start-btn:active { transform: scale(0.97); }
+
+  /* ── BOARD SCREEN ── */
+  #screen-board {
+    background: var(--yellow);
+    padding: 20px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .board-header {
+    width: 100%; max-width: 1100px;
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 18px;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .board-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 36px; color: var(--black);
+    letter-spacing: 2px;
+  }
+  .scoreboard-area {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    align-items: center;
+  }
+  .player-score-pill {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 15px; font-weight: 700;
+    padding: 8px 18px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 2px;
+    min-width: 90px;
+  }
+  .player-score-pill .p-name { font-size: 11px; letter-spacing: 2px; opacity: 0.7; text-transform: uppercase; }
+  .player-score-pill .p-score { font-size: 20px; font-family: 'Courier New', Courier, monospace; }
+  .player-score-pill .p-score.negative { color: var(--red); }
+
+  .board-grid {
+    width: 100%; max-width: 1100px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+  .cat-header {
+    background: var(--black); color: var(--white);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; font-weight: 700;
+    text-align: center; padding: 14px 8px;
+    min-height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1.3;
+  }
+  .tile {
+    background: var(--white);
+    border: 3px solid var(--yellow-dark);
+    min-height: 90px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.12s;
+    position: relative;
+  }
+  .tile:hover:not(.used) { background: var(--off-white); transform: scale(1.03); }
+  .tile:active:not(.used) { transform: scale(0.97); }
+  .tile .tile-val {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 32px; font-weight: 700; color: var(--black);
+  }
+  .tile.used { background: var(--yellow-dark); cursor: default; border-color: var(--yellow-dark); }
+  .tile.used .tile-val { visibility: hidden; }
+
+  .board-footer {
+    width: 100%; max-width: 1100px;
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 16px;
+  }
+  .progress-wrap {
+    flex: 1; height: 6px;
+    background: rgba(0,0,0,0.15); margin-right: 20px;
+  }
+  .progress-fill {
+    height: 100%; background: var(--black); transition: width 0.4s;
+  }
+  .board-btns { display: flex; gap: 8px; }
+  .reset-link {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; color: var(--black);
+    background: none; border: 2px solid var(--black);
+    padding: 6px 16px; cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .reset-link:hover { background: var(--black); color: var(--yellow); }
+  .edit-link {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; color: var(--black);
+    background: none; border: 2px solid var(--black);
+    padding: 6px 16px; cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .edit-link:hover { background: var(--black); color: var(--yellow); }
+
+  /* ── QUESTION SCREEN ── */
+  #screen-question {
+    background: var(--yellow);
+    padding: 40px 60px;
+    justify-content: space-between;
+    min-height: 100vh;
+  }
+  .q-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; width: 100%;
+  }
+  .q-meta { display: flex; flex-direction: column; gap: 4px; }
+  .q-category {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 20px; font-weight: 700;
+    color: var(--black); letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .q-value {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 26px; font-weight: 700; color: var(--black);
+  }
+  .q-back-btn {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; border: none;
+    padding: 8px 18px; cursor: pointer;
+    letter-spacing: 1px;
+  }
+  .q-back-btn:hover { background: #333; }
+
+  .q-body {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; padding: 20px 0;
+    max-width: 900px; width: 100%;
+    align-self: flex-start;
+  }
+  .q-text {
+    font-family: 'Averia Libre', serif;
+    font-size: clamp(28px, 4vw, 52px);
+    line-height: 1.35; color: var(--black);
+    margin-bottom: 32px;
+  }
+  .q-text em { font-style: italic; text-decoration: underline; }
+
+  .answer-box {
+    background: var(--black); color: var(--yellow);
+    padding: 20px 28px; display: none;
+    margin-bottom: 28px;
+    animation: slideIn 0.3s ease;
+  }
+  .answer-box.visible { display: block; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .answer-box .ans-label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 12px; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,220,3,0.6); margin-bottom: 8px;
+  }
+  .answer-box .ans-text {
+    font-family: 'Averia Libre', serif;
+    font-size: 26px; font-weight: 700; color: var(--yellow);
+  }
+
+  /* ── REACTION BANNER (separate from score) ── */
+  .reaction-banner {
+    display: none;
+    margin-bottom: 20px;
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 22px; font-weight: 700;
+    font-style: italic;
+    letter-spacing: 2px;
+    color: #888;
+    animation: bounceIn 0.4s cubic-bezier(.22,1,.36,1);
+  }
+  .reaction-banner.visible { display: block; }
+  @keyframes bounceIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+  .q-actions {
+    display: flex; flex-direction: column;
+    gap: 14px; align-items: flex-start;
+    width: 100%; max-width: 700px;
+  }
+  .btn-reveal {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 20px; font-weight: 700;
+    border: none; padding: 18px 48px;
+    cursor: pointer; letter-spacing: 2px;
+    transition: transform 0.1s, background 0.12s;
+    width: 100%; max-width: 380px;
+  }
+  .btn-reveal:hover { background: #333; }
+  .btn-reveal:active { transform: scale(0.97); }
+
+  /* ── PLAYER JUDGE AREA ── */
+  .judge-area { display: none; width: 100%; }
+  .judge-area.visible { display: block; }
+  .judge-label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; letter-spacing: 3px;
+    color: rgba(0,0,0,0.5); margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .player-judge-list {
+    display: flex; flex-direction: column; gap: 8px;
+    width: 100%; max-width: 560px;
+  }
+  .player-judge-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pj-name {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 1px; min-width: 100px;
+    text-transform: uppercase;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .pj-wrong {
+    flex: 1; background: var(--red); color: var(--white);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px; font-weight: 700;
+    border: none; padding: 12px 0;
+    cursor: pointer; letter-spacing: 1px;
+    transition: transform 0.1s, background 0.12s;
+  }
+  .pj-wrong:hover { background: var(--red-dark); }
+  .pj-wrong:active { transform: scale(0.97); }
+  .pj-right {
+    flex: 1; background: var(--green); color: var(--white);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px; font-weight: 700;
+    border: none; padding: 12px 0;
+    cursor: pointer; letter-spacing: 1px;
+    transition: transform 0.1s, background 0.12s;
+  }
+  .pj-right:hover { background: var(--green-dark); }
+  .pj-right:active { transform: scale(0.97); }
+  .pj-judged {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; padding: 12px 16px;
+    opacity: 0.55; flex: 1; text-align: center;
+    border: 2px solid rgba(0,0,0,0.2);
+  }
+
+  .done-btn {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px; font-weight: 700;
+    border: none; padding: 12px 32px;
+    cursor: pointer; letter-spacing: 2px;
+    transition: transform 0.1s, background 0.12s;
+    margin-top: 8px;
+    align-self: flex-start;
+  }
+  .done-btn:hover { background: #333; }
+  .done-btn:active { transform: scale(0.97); }
+
+  /* ── FUN RESULT TOAST ── */
+  .fun-toast {
+    position: fixed; bottom: 40px; right: 40px;
+    background: var(--black); color: var(--yellow);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 22px; font-weight: 700;
+    padding: 16px 32px; letter-spacing: 2px;
+    transform: translateY(120px); opacity: 0;
+    transition: transform 0.3s cubic-bezier(.22,1,.36,1), opacity 0.3s;
+    pointer-events: none; z-index: 999;
+    max-width: 340px; text-align: center;
+  }
+  .fun-toast.show { transform: translateY(0); opacity: 1; }
+  .fun-toast.correct { background: var(--green-dark); color: var(--white); }
+  .fun-toast.wrong { background: var(--red-dark); color: var(--white); }
+
+  /* ── EDIT SCREEN ── */
+  #screen-edit {
+    background: var(--off-white);
+    padding: 24px;
+    align-items: center;
+  }
+  .edit-header {
+    width: 100%; max-width: 1100px;
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 20px;
+  }
+  .edit-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 36px; color: var(--black);
+    letter-spacing: 2px;
+  }
+  .edit-back-btn {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; border: none;
+    padding: 10px 22px; cursor: pointer; letter-spacing: 1px;
+    transition: background 0.12s;
+  }
+  .edit-back-btn:hover { background: #333; }
+  .edit-body {
+    width: 100%; max-width: 1100px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .edit-section {
+    background: var(--white);
+    border: 3px solid var(--black);
+    padding: 16px 20px;
+  }
+  .edit-section-title {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; letter-spacing: 3px;
+    text-transform: uppercase; color: rgba(0,0,0,0.5);
+    margin-bottom: 12px;
+  }
+  .edit-reactions-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .edit-reaction-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .edit-reaction-item label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+  }
+  .edit-reaction-item input {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; border: 2px solid #ccc;
+    padding: 6px 10px; outline: none;
+    transition: border-color 0.12s;
+  }
+  .edit-reaction-item input:focus { border-color: var(--black); }
+  .edit-categories-row {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+  }
+  .edit-cat-input {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; border: 2px solid #ccc;
+    padding: 8px; outline: none; text-align: center;
+    font-weight: 700;
+    transition: border-color 0.12s;
+  }
+  .edit-cat-input:focus { border-color: var(--black); }
+  .edit-questions-tabs {
+    display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px;
+  }
+  .edit-tab {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 12px; letter-spacing: 1px;
+    padding: 6px 14px; cursor: pointer;
+    border: 2px solid var(--black);
+    background: none; transition: all 0.1s;
+  }
+  .edit-tab.active, .edit-tab:hover {
+    background: var(--black); color: var(--yellow);
+  }
+  .edit-q-list { display: flex; flex-direction: column; gap: 10px; }
+  .edit-q-row {
+    display: grid; grid-template-columns: 80px 1fr 1fr;
+    gap: 8px; align-items: start;
+  }
+  .edit-q-row label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 12px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+    padding-top: 8px; text-align: right; padding-right: 4px;
+  }
+  .edit-q-row input, .edit-q-row textarea {
+    font-family: 'Averia Libre', serif;
+    font-size: 14px; border: 2px solid #ccc;
+    padding: 8px; outline: none; resize: vertical;
+    transition: border-color 0.12s; width: 100%;
+  }
+  .edit-q-row input:focus, .edit-q-row textarea:focus { border-color: var(--black); }
+  .edit-save-btn {
+    background: var(--green); color: var(--white);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px; font-weight: 700;
+    border: none; padding: 14px 40px;
+    cursor: pointer; letter-spacing: 2px;
+    margin-top: 8px;
+    align-self: flex-start;
+    transition: transform 0.1s, background 0.12s;
+  }
+  .edit-save-btn:hover { background: var(--green-dark); }
+  .edit-saved-note {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; color: var(--green-dark);
+    letter-spacing: 1px; margin-top: 8px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .edit-saved-note.visible { opacity: 1; }
+
+  /* ── GAME OVER ── */
+  #screen-gameover {
+    background: var(--yellow);
+    align-items: center;
+    justify-content: center;
+    text-align: center; gap: 16px;
+    position: relative; overflow: hidden;
+  }
+  .gameover-inner {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 20px;
+  }
+  #screen-gameover h2 {
+    font-family: 'Anton', sans-serif;
+    font-size: 80px; color: var(--black); line-height: 1;
+  }
+  .final-players-list {
+    display: flex; flex-direction: column; gap: 10px;
+    width: 100%; max-width: 400px;
+  }
+  .final-player-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--black); color: var(--yellow);
+    padding: 12px 24px;
+  }
+  .final-player-row .fp-name {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .final-player-row .fp-score {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px; font-weight: 700;
+  }
+  .final-player-row .fp-score.negative { color: var(--red); }
+  .final-player-row.winner {
+    background: var(--white); color: var(--black);
+    border: 4px solid var(--black);
+  }
+  .winner-badge {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+    background: var(--yellow); color: var(--black);
+    padding: 4px 10px; margin-bottom: 8px;
+    border: 2px solid var(--black);
+  }
+  .play-again {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 22px; font-weight: 700;
+    border: none; padding: 18px 52px;
+    cursor: pointer; letter-spacing: 2px; margin-top: 20px;
+    transition: transform 0.1s, background 0.12s;
+  }
+  .play-again:hover { background: #333; }
+  .play-again:active { transform: scale(0.97); }
+
+  /* ── CONFETTI ── */
+  #confetti-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 1;
+  }
+
+  @media (max-width: 800px) {
+    .board-grid { gap: 3px; }
+    .cat-header { font-size: 10px; padding: 8px 4px; min-height: 60px; }
+    .tile { min-height: 60px; }
+    .tile .tile-val { font-size: 20px; }
+    #screen-question { padding: 24px 24px; }
+    .q-text { font-size: 24px; }
+    #screen-title { padding: 40px 32px; }
+    #screen-title h1 { font-size: 60px; }
+    #screen-title h1 span { font-size: 48px; }
+    .edit-categories-row { grid-template-columns: repeat(3, 1fr); }
+    .edit-q-row { grid-template-columns: 60px 1fr; }
+    .edit-q-row input:last-child, .edit-q-row textarea:last-child { grid-column: 2; }
+    #screen-gameover h2 { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- TITLE SCREEN -->
+<div id="screen-title" class="screen active">
+  <svg class="arrow-decor" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M40 260 L40 40 L260 40" stroke="black" stroke-width="48" stroke-linecap="square" fill="none"/>
+    <path d="M200 40 L260 40 L260 100" stroke="black" stroke-width="48" stroke-linecap="square" fill="none"/>
+  </svg>
+  <h1>Welcome to<span>Game Night</span></h1>
+  <div class="sub">A SAUMYA STUDIO PRODUCTION</div>
+  <button class="start-btn" onclick="showScreen('setup')">START GAME</button>
+</div>
+
+<!-- PLAYER SETUP SCREEN -->
+<div id="screen-setup" class="screen">
+  <h2>HOW MANY<br>PLAYERS? 🎮</h2>
+  <div class="setup-subtitle">CHOOSE YOUR SQUAD SIZE</div>
+  <div class="player-count-row" id="player-count-row">
+    <button class="player-count-btn" onclick="setPlayerCount(1)">1</button>
+    <button class="player-count-btn active" onclick="setPlayerCount(2)">2</button>
+    <button class="player-count-btn" onclick="setPlayerCount(3)">3</button>
+    <button class="player-count-btn" onclick="setPlayerCount(4)">4</button>
+    <button class="player-count-btn" onclick="setPlayerCount(5)">5</button>
+    <button class="player-count-btn" onclick="setPlayerCount(6)">6</button>
+  </div>
+  <div class="player-names-area" id="player-names-area"></div>
+  <button class="setup-start-btn" onclick="startGame()">LET'S PLAY ✦</button>
+</div>
+
+<!-- BOARD SCREEN -->
+<div id="screen-board" class="screen">
+  <div class="board-header">
+    <div class="board-title">GAME NIGHT</div>
+    <div class="scoreboard-area" id="scoreboard-area"></div>
+  </div>
+  <div class="board-grid" id="board-grid"></div>
+  <div class="board-footer">
+    <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="board-btns">
+      <button class="edit-link" onclick="showScreen('edit')">✎ EDIT</button>
+      <button class="reset-link" onclick="showGameOver()">⚑ FINISH</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTION SCREEN -->
+<div id="screen-question" class="screen">
+  <div class="q-top">
+    <div class="q-meta">
+      <div class="q-category" id="q-cat-label"></div>
+      <div class="q-value" id="q-val-label"></div>
+    </div>
+    <button class="q-back-btn" onclick="showScreen('board')">← BOARD</button>
+  </div>
+  <div class="q-body">
+    <div class="q-text" id="q-text"></div>
+
+    <!-- Reaction banner — shows any time, regardless of right/wrong -->
+    <div class="reaction-banner" id="reaction-banner"></div>
+
+    <div class="answer-box" id="answer-box">
+      <div class="ans-label">ANSWER</div>
+      <div class="ans-text" id="ans-text"></div>
+    </div>
+    <div class="q-actions">
+      <button class="btn-reveal" id="btn-reveal" onclick="revealAnswer()">REVEAL ANSWER</button>
+
+      <!-- Per-player judge area -->
+      <div class="judge-area" id="judge-area">
+        <div class="judge-label">WHO GOT IT? ✦</div>
+        <div class="player-judge-list" id="player-judge-list"></div>
+        <button class="done-btn" onclick="finishQuestion()">DONE →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT SCREEN -->
+<div id="screen-edit" class="screen">
+  <div class="edit-header">
+    <div class="edit-title">✎ EDIT MODE</div>
+    <button class="edit-back-btn" onclick="saveEdits(); showScreen('board')">✓ SAVE & BACK</button>
+  </div>
+  <div class="edit-body">
+
+    <div class="edit-section">
+      <div class="edit-section-title">✦ Reactions (shown after question reveals)</div>
+      <div class="edit-reactions-grid" id="edit-reactions-grid"></div>
+    </div>
+
+    <div class="edit-section">
+      <div class="edit-section-title">✦ Categories</div>
+      <div class="edit-categories-row" id="edit-categories-row"></div>
+    </div>
+
+    <div class="edit-section">
+      <div class="edit-section-title">✦ Questions & Answers</div>
+      <div class="edit-questions-tabs" id="edit-questions-tabs"></div>
+      <div class="edit-q-list" id="edit-q-list"></div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:16px;">
+      <button class="edit-save-btn" onclick="saveEdits()">✓ SAVE CHANGES</button>
+      <div class="edit-saved-note" id="edit-saved-note">Saved! ✦</div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME OVER SCREEN -->
+<div id="screen-gameover" class="screen">
+  <div class="gameover-inner">
+    <h2>🎉 GAME OVER!</h2>
+    <div class="final-players-list" id="final-players-list"></div>
+    <button class="play-again" onclick="goSetup()">PLAY AGAIN ✦</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="fun-toast" id="fun-toast"></div>
+
+<script>
+/* ─────────────── DATA ─────────────── */
+let CATEGORIES = [
+  "Fake News",
+  "Wha Wha WHAAAA",
+  "Plot Summaries Gone Wrong",
+  "My Heart",
+  "A Whole New World",
+  "Bigfoot is Real"
+];
+
+let QUESTIONS = [
+  [ // Fake News
+    { q: "This animal is commonly believed to remember things for only a few seconds.", a: "What is a goldfish?", fun: "GREAT JOB", val: 200 },
+    { q: "This Wonder of the World is not visible from space with the naked eye, despite popular belief.", a: "What is the Great Wall of China?", fun: "U SO SEXY", val: 400 },
+    { q: "A common misconception is that cracking your knuckles will cause this degenerative disease.", a: "What is arthritis?", fun: "Hubba Hubba", val: 600 },
+    { q: "Many people believe that humans only access this % amount of their brain — the premise for the movie Lucy with ScarJo.", a: "What is 10%?", fun: "Wowww", val: 800 }
+  ],
+  [ // Wha Wha WHAAAA
+    { q: "This planet is known for having the shortest day.", a: "What is Jupiter?", fun: "Humpahumpa", val: 200 },
+    { q: "Bananas are classified as this type of fruit.", a: "What is a berry?", fun: "U SO SMAHT", val: 400 },
+    { q: "This is one of only two letters not found anywhere on the periodic table.", a: "What is the letter J or Q?", fun: "I lava you", val: 600 },
+    { q: "This country technically has no official capital.", a: "What is Switzerland?", fun: "Sexy nerd", val: 800 }
+  ],
+  [ // Plot Summaries Gone Wrong
+    { q: "A boy attends a boarding school and almost dies every year.", a: "What is Harry Potter?", fun: "Wowza ;)", val: 200 },
+    { q: "A wealthy man beats people up to deal with unresolved trauma.", a: "What is Batman?", fun: "DADDY?", val: 400 },
+    { q: "Baking causes British people to have multiple emotional breakdowns.", a: "What is The Great British Bake-Off?", fun: "Happy Happy Joy Joy", val: 600 },
+    { q: "A kid's unresolved daddy issues escalate into a galactic civil war.", a: "What is Star Wars?", fun: "Rainbow Connection", val: 800 }
+  ],
+  [ // My Heart
+    { q: "Our ring engravings have this many characters.", a: "What is 16?", fun: "Mhmmm", val: 200 },
+    { q: "I am allergic to a lot of things. These are the only three nuts I'm not allergic to.", a: "What are hazelnuts, peanuts, and almonds?", fun: "My knight", val: 400 },
+    { q: "In high school, I studied abroad in this city, focusing on fashion and design.", a: "What is Hong Kong?", fun: "Ur mine!", val: 600 },
+    { q: "Human organs are generally symmetrical. I was born with one of these larger than the other.", a: "What are kidneys?", fun: "Hehehe", val: 800 }
+  ],
+  [ // A Whole New World
+    { q: "Mickey Mouse made his official debut with Steamboat Willie in this year.", a: "What is 1928?", fun: "Clocked it", val: 200 },
+    { q: "This Pixar film was the first animated movie ever nominated for Best Picture at the Oscars.", a: "What is Up?", fun: "My baby?", val: 400 },
+    { q: "This Disney princess is the only one with a visible tattoo.", a: "Who is Pocahontas?", fun: "PANTIES OFF", val: 600 },
+    { q: "This Disney villain has the most on-screen deaths directly attributed to them.", a: "Who is Scar?", fun: "WOMP WOMP", val: 800 }
+  ],
+  [ // Bigfoot is Real
+    { q: "Two famous bands had a member die in the same bed, in the same apartment. Name one of the bands.", a: "Who are Mamas and the Papas (Mama Cass Elliot) or The Who (Keith Moon)?", fun: "OH NAUR", val: 200 },
+    { q: "People believe that this artist did not commit suicide, but was in fact murdered by his wife, Courtney Love.", a: "Who is Kurt Cobain?", fun: "OH NAUR", val: 400 },
+    { q: "People claim that this Led Zeppelin song is backmasking the lines 'Here's to my sweet Satan'.", a: "What is Stairway to Heaven?", fun: "OH NAUR", val: 600 },
+    { q: "This Beatles member is believed by some fans to have died in 1966 and been replaced.", a: "Who is Paul McCartney?", fun: "OH NAUR", val: 800 }
+  ]
+];
+
+/* ─────────────── STATE ─────────────── */
+let players = [];  // { name, score }
+let answered = 0;
+let used = Array.from({length: 6}, () => Array(4).fill(false));
+let current = null;
+let currentJudged = []; // track which players judged for current Q
+const TOTAL = 24;
+
+/* ─────────────── SETUP ─────────────── */
+let selectedPlayerCount = 2;
+
+function setPlayerCount(n) {
+  selectedPlayerCount = n;
+  document.querySelectorAll('.player-count-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', (i + 1) === n);
+  });
+  buildPlayerNameInputs();
+}
+
+function buildPlayerNameInputs() {
+  const area = document.getElementById('player-names-area');
+  const existing = area.querySelectorAll('input');
+  const existingVals = Array.from(existing).map(i => i.value);
+  area.innerHTML = '';
+  const defaults = ['Player 1','Player 2','Player 3','Player 4','Player 5','Player 6'];
+  for (let i = 0; i < selectedPlayerCount; i++) {
+    const row = document.createElement('div');
+    row.className = 'player-name-input';
+    const label = document.createElement('label');
+    label.textContent = 'P' + (i+1);
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = defaults[i];
+    input.value = existingVals[i] || '';
+    input.maxLength = 14;
+    row.appendChild(label);
+    row.appendChild(input);
+    area.appendChild(row);
+  }
+}
+
+function startGame() {
+  const inputs = document.querySelectorAll('#player-names-area input');
+  const defaults = ['Player 1','Player 2','Player 3','Player 4','Player 5','Player 6'];
+  players = [];
+  inputs.forEach((inp, i) => {
+    players.push({ name: inp.value.trim() || defaults[i], score: 0 });
+  });
+  answered = 0;
+  used = Array.from({length: 6}, () => Array(4).fill(false));
+  buildBoard();
+  showScreen('board');
+}
+
+function goSetup() {
+  showScreen('setup');
+}
+
+/* ─────────────── SCREENS ─────────────── */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+/* ─────────────── BOARD ─────────────── */
+function buildBoard() {
+  const grid = document.getElementById('board-grid');
+  grid.innerHTML = '';
+
+  CATEGORIES.forEach(cat => {
+    const el = document.createElement('div');
+    el.className = 'cat-header';
+    el.textContent = cat;
+    grid.appendChild(el);
+  });
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 6; col++) {
+      const q = QUESTIONS[col][row];
+      const tile = document.createElement('div');
+      tile.className = 'tile' + (used[col][row] ? ' used' : '');
+      const span = document.createElement('span');
+      span.className = 'tile-val';
+      span.textContent = '$' + q.val;
+      tile.appendChild(span);
+      if (!used[col][row]) {
+        tile.addEventListener('click', () => openQuestion(col, row));
+      }
+      grid.appendChild(tile);
+    }
+  }
+  updateScoreUI();
+}
+
+function updateScoreUI() {
+  const area = document.getElementById('scoreboard-area');
+  area.innerHTML = '';
+  players.forEach(p => {
+    const pill = document.createElement('div');
+    pill.className = 'player-score-pill';
+    const nameEl = document.createElement('div');
+    nameEl.className = 'p-name';
+    nameEl.textContent = p.name;
+    const scoreEl = document.createElement('div');
+    scoreEl.className = 'p-score' + (p.score < 0 ? ' negative' : '');
+    scoreEl.textContent = p.score < 0 ? '-$' + Math.abs(p.score).toLocaleString() : '$' + p.score.toLocaleString();
+    pill.appendChild(nameEl);
+    pill.appendChild(scoreEl);
+    area.appendChild(pill);
+  });
+  document.getElementById('progress-fill').style.width = (answered / TOTAL * 100) + '%';
+}
+
+/* ─────────────── QUESTION ─────────────── */
+function openQuestion(col, row) {
+  current = { col, row };
+  currentJudged = players.map(() => null); // null = not yet judged
+
+  const q = QUESTIONS[col][row];
+  document.getElementById('q-cat-label').textContent = CATEGORIES[col].toUpperCase();
+  document.getElementById('q-val-label').textContent = '$' + q.val;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('ans-text').textContent = q.a;
+
+  document.getElementById('answer-box').classList.remove('visible');
+  document.getElementById('btn-reveal').style.display = 'block';
+  document.getElementById('judge-area').classList.remove('visible');
+
+  // Hide reaction banner
+  const rb = document.getElementById('reaction-banner');
+  rb.classList.remove('visible');
+  rb.textContent = '';
+
+  showScreen('question');
+}
+
+function revealAnswer() {
+  const { col, row } = current;
+  const q = QUESTIONS[col][row];
+
+  document.getElementById('answer-box').classList.add('visible');
+  document.getElementById('btn-reveal').style.display = 'none';
+  document.getElementById('judge-area').classList.add('visible');
+
+  // Show the reaction banner (always, regardless of score)
+  const rb = document.getElementById('reaction-banner');
+  rb.textContent = '';
+  rb.innerHTML = '✦ ' + q.fun + ' ✦';
+  rb.classList.add('visible');
+
+  buildPlayerJudgeList();
+}
+
+function buildPlayerJudgeList() {
+  const list = document.getElementById('player-judge-list');
+  list.innerHTML = '';
+  players.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = 'player-judge-row';
+    row.id = 'pj-row-' + i;
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'pj-name';
+    nameEl.textContent = p.name;
+
+    if (currentJudged[i] === null) {
+      const wrongBtn = document.createElement('button');
+      wrongBtn.className = 'pj-wrong';
+      wrongBtn.textContent = '✕ WRONG';
+      wrongBtn.onclick = () => judgePlayer(i, false);
+
+      const rightBtn = document.createElement('button');
+      rightBtn.className = 'pj-right';
+      rightBtn.textContent = '✓ RIGHT';
+      rightBtn.onclick = () => judgePlayer(i, true);
+
+      row.appendChild(nameEl);
+      row.appendChild(wrongBtn);
+      row.appendChild(rightBtn);
+    } else {
+      const result = document.createElement('div');
+      result.className = 'pj-judged';
+      result.textContent = currentJudged[i] ? '✓ GOT IT' : '✕ NOPE';
+      row.appendChild(nameEl);
+      row.appendChild(result);
+    }
+    list.appendChild(row);
+  });
+}
+
+function judgePlayer(playerIdx, correct) {
+  const { col, row } = current;
+  const q = QUESTIONS[col][row];
+
+  currentJudged[playerIdx] = correct;
+  if (correct) {
+    players[playerIdx].score += q.val;
+    showToast(players[playerIdx].name + ': +$' + q.val, 'correct');
+  } else {
+    players[playerIdx].score -= q.val;
+    showToast(players[playerIdx].name + ': -$' + q.val, 'wrong');
+  }
+  buildPlayerJudgeList();
+}
+
+function finishQuestion() {
+  const { col, row } = current;
+  used[col][row] = true;
+  answered++;
+
+  showScreen('board');
+  buildBoard();
+
+  if (answered === TOTAL) {
+    setTimeout(() => showGameOver(), 1200);
+  }
+}
+
+function showGameOver() {
+  const sorted = [...players].sort((a, b) => b.score - a.score);
+  const winnerScore = sorted[0].score;
+
+  const list = document.getElementById('final-players-list');
+  list.innerHTML = '';
+
+  // Winner badge
+  if (players.length > 1) {
+    const badge = document.createElement('div');
+    badge.className = 'winner-badge';
+    badge.textContent = '✦ WINNER ✦';
+    list.appendChild(badge);
+  }
+
+  sorted.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = 'final-player-row' + (i === 0 && players.length > 1 ? ' winner' : '');
+    const nameEl = document.createElement('div');
+    nameEl.className = 'fp-name';
+    nameEl.textContent = p.name;
+    const scoreEl = document.createElement('div');
+    scoreEl.className = 'fp-score' + (p.score < 0 ? ' negative' : '');
+    scoreEl.textContent = p.score < 0 ? '-$' + Math.abs(p.score).toLocaleString() : '$' + p.score.toLocaleString();
+    row.appendChild(nameEl);
+    row.appendChild(scoreEl);
+    list.appendChild(row);
+  });
+
+  showScreen('gameover');
+  launchConfetti();
+}
+
+/* ─────────────── TOAST ─────────────── */
+function showToast(msg, type) {
+  const toast = document.getElementById('fun-toast');
+  toast.textContent = msg;
+  toast.className = 'fun-toast ' + type + ' show';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+/* ─────────────── RESET ─────────────── */
+function resetGame() {
+  players.forEach(p => p.score = 0);
+  answered = 0;
+  used = Array.from({length: 6}, () => Array(4).fill(false));
+  buildBoard();
+  showScreen('board');
+}
+
+/* ─────────────── EDIT MODE ─────────────── */
+let editActiveTab = 0;
+
+function buildEditScreen() {
+  // Reactions
+  const reactGrid = document.getElementById('edit-reactions-grid');
+  reactGrid.innerHTML = '';
+  QUESTIONS.forEach((col, ci) => {
+    col.forEach((q, ri) => {
+      const item = document.createElement('div');
+      item.className = 'edit-reaction-item';
+      const label = document.createElement('label');
+      label.textContent = CATEGORIES[ci].slice(0,10) + ' $' + q.val;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = q.fun;
+      input.dataset.col = ci;
+      input.dataset.row = ri;
+      input.dataset.field = 'fun';
+      item.appendChild(label);
+      item.appendChild(input);
+      reactGrid.appendChild(item);
+    });
+  });
+
+  // Categories
+  const catRow = document.getElementById('edit-categories-row');
+  catRow.innerHTML = '';
+  CATEGORIES.forEach((cat, i) => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'edit-cat-input';
+    input.value = cat;
+    input.dataset.catIdx = i;
+    catRow.appendChild(input);
+  });
+
+  // Tabs
+  const tabs = document.getElementById('edit-questions-tabs');
+  tabs.innerHTML = '';
+  CATEGORIES.forEach((cat, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'edit-tab' + (i === editActiveTab ? ' active' : '');
+    btn.textContent = cat.slice(0, 14);
+    btn.onclick = () => { editActiveTab = i; buildEditQuestionList(); buildEditTabs(); };
+    tabs.appendChild(btn);
+  });
+
+  buildEditQuestionList();
+}
+
+function buildEditTabs() {
+  const tabs = document.getElementById('edit-questions-tabs');
+  tabs.querySelectorAll('.edit-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', i === editActiveTab);
+  });
+}
+
+function buildEditQuestionList() {
+  const list = document.getElementById('edit-q-list');
+  list.innerHTML = '';
+  QUESTIONS[editActiveTab].forEach((q, ri) => {
+    const row = document.createElement('div');
+    row.className = 'edit-q-row';
+    const label = document.createElement('label');
+    label.textContent = '$' + q.val;
+
+    const qInput = document.createElement('textarea');
+    qInput.rows = 2;
+    qInput.value = q.q;
+    qInput.dataset.col = editActiveTab;
+    qInput.dataset.row = ri;
+    qInput.dataset.field = 'q';
+
+    const aInput = document.createElement('input');
+    aInput.type = 'text';
+    aInput.value = q.a;
+    aInput.placeholder = 'Answer';
+    aInput.dataset.col = editActiveTab;
+    aInput.dataset.row = ri;
+    aInput.dataset.field = 'a';
+
+    row.appendChild(label);
+    row.appendChild(qInput);
+    row.appendChild(aInput);
+    list.appendChild(row);
+  });
+}
+
+function saveEdits() {
+  // Save reactions
+  document.querySelectorAll('#edit-reactions-grid input').forEach(inp => {
+    const ci = parseInt(inp.dataset.col);
+    const ri = parseInt(inp.dataset.row);
+    QUESTIONS[ci][ri].fun = inp.value;
+  });
+  // Save categories
+  document.querySelectorAll('#edit-categories-row input').forEach(inp => {
+    CATEGORIES[parseInt(inp.dataset.catIdx)] = inp.value;
+  });
+  // Save questions/answers
+  document.querySelectorAll('#edit-q-list textarea, #edit-q-list input').forEach(inp => {
+    const ci = parseInt(inp.dataset.col);
+    const ri = parseInt(inp.dataset.row);
+    QUESTIONS[ci][ri][inp.dataset.field] = inp.value;
+  });
+
+  const note = document.getElementById('edit-saved-note');
+  note.classList.add('visible');
+  setTimeout(() => note.classList.remove('visible'), 2000);
+  buildBoard();
+}
+
+// Rebuild edit screen whenever entering it
+const origShowScreen = showScreen;
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'edit') buildEditScreen();
+}
+
+/* ─────────────── CONFETTI ─────────────── */
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#FFDC03','#FF9900','#FFA3E8','#8BCAC6','#9155F1','#22c55e','#ef4444','#1a1a1a'];
+  const pieces = Array.from({length: 160}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    r: Math.random() * 8 + 4,
+    d: Math.random() * 160 + 60,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    tilt: Math.random() * 10 - 10,
+    tiltAngle: 0,
+    tiltAngleInc: Math.random() * 0.07 + 0.05,
+    shape: Math.random() > 0.5 ? 'rect' : 'circle'
+  }));
+
+  let angle = 0;
+  let frame = 0;
+  const maxFrames = 280;
+
+  function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    angle += 0.01;
+    frame++;
+    pieces.forEach(p => {
+      p.tiltAngle += p.tiltAngleInc;
+      p.y += (Math.cos(angle + p.d) + 2 + p.r / 5) * 1.6;
+      p.x += Math.sin(angle) * 2;
+      p.tilt = Math.sin(p.tiltAngle - frame / 3) * 12;
+      ctx.beginPath();
+      ctx.lineWidth = p.r / 2;
+      ctx.strokeStyle = p.color;
+      ctx.fillStyle = p.color;
+      if (p.shape === 'rect') {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.tiltAngle);
+        ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
+        ctx.restore();
+      } else {
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      if (p.y > canvas.height) {
+        p.x = Math.random() * canvas.width;
+        p.y = -20;
+      }
+    });
+    if (frame < maxFrames) {
+      requestAnimationFrame(drawConfetti);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  drawConfetti();
+}
+
+/* ─────────────── INIT ─────────────── */
+setPlayerCount(2);
+buildPlayerNameInputs();
+</script>
+</body>
+</html>
