@@ -36,6 +36,36 @@
   .screen { display: none; min-height: 100vh; }
   .screen.active { display: flex; flex-direction: column; }
 
+  /* ── LOADING SCREEN ── */
+  #screen-loading {
+    background: var(--yellow);
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  .loading-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 48px;
+    color: var(--black);
+    letter-spacing: 2px;
+  }
+  .loading-dots {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 18px;
+    letter-spacing: 4px;
+    color: rgba(0,0,0,0.5);
+    animation: blink 1.2s infinite;
+  }
+  .loading-error {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px;
+    color: var(--red-dark);
+    letter-spacing: 1px;
+    text-align: center;
+    max-width: 400px;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
   /* ── TITLE SCREEN ── */
   #screen-title {
     background: var(--yellow);
@@ -188,7 +218,6 @@
   .board-grid {
     width: 100%; max-width: 1100px;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
     gap: 6px;
   }
   .cat-header {
@@ -314,7 +343,7 @@
     font-size: 26px; font-weight: 700; color: var(--yellow);
   }
 
-  /* ── REACTION BANNER (separate from score) ── */
+  /* ── REACTION BANNER ── */
   .reaction-banner {
     display: none;
     margin-bottom: 20px;
@@ -463,6 +492,12 @@
     text-transform: uppercase; color: rgba(0,0,0,0.5);
     margin-bottom: 12px;
   }
+  .edit-note {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 12px; color: rgba(0,0,0,0.4);
+    letter-spacing: 1px; margin-bottom: 10px;
+    font-style: italic;
+  }
   .edit-reactions-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 8px;
@@ -482,7 +517,7 @@
   }
   .edit-reaction-item input:focus { border-color: var(--black); }
   .edit-categories-row {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+    display: grid; gap: 8px;
   }
   .edit-cat-input {
     font-family: 'Pixelify Sans', monospace;
@@ -626,8 +661,15 @@
 
 <canvas id="confetti-canvas"></canvas>
 
+<!-- LOADING SCREEN -->
+<div id="screen-loading" class="screen active">
+  <div class="loading-title">GAME NIGHT</div>
+  <div class="loading-dots" id="loading-dots">LOADING...</div>
+  <div class="loading-error" id="loading-error" style="display:none"></div>
+</div>
+
 <!-- TITLE SCREEN -->
-<div id="screen-title" class="screen active">
+<div id="screen-title" class="screen">
   <svg class="arrow-decor" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M40 260 L40 40 L260 40" stroke="black" stroke-width="48" stroke-linecap="square" fill="none"/>
     <path d="M200 40 L260 40 L260 100" stroke="black" stroke-width="48" stroke-linecap="square" fill="none"/>
@@ -680,18 +722,13 @@
   </div>
   <div class="q-body">
     <div class="q-text" id="q-text"></div>
-
-    <!-- Reaction banner — shows any time, regardless of right/wrong -->
     <div class="reaction-banner" id="reaction-banner"></div>
-
     <div class="answer-box" id="answer-box">
       <div class="ans-label">ANSWER</div>
       <div class="ans-text" id="ans-text"></div>
     </div>
     <div class="q-actions">
       <button class="btn-reveal" id="btn-reveal" onclick="revealAnswer()">REVEAL ANSWER</button>
-
-      <!-- Per-player judge area -->
       <div class="judge-area" id="judge-area">
         <div class="judge-label">WHO GOT IT? ✦</div>
         <div class="player-judge-list" id="player-judge-list"></div>
@@ -705,26 +742,23 @@
 <div id="screen-edit" class="screen">
   <div class="edit-header">
     <div class="edit-title">✎ EDIT MODE</div>
-    <button class="edit-back-btn" onclick="saveEdits(); showScreen('board')">✓ SAVE & BACK</button>
+    <button class="edit-back-btn" onclick="showScreen('board')">← BACK</button>
   </div>
   <div class="edit-body">
-
     <div class="edit-section">
       <div class="edit-section-title">✦ Reactions (shown after question reveals)</div>
       <div class="edit-reactions-grid" id="edit-reactions-grid"></div>
     </div>
-
     <div class="edit-section">
       <div class="edit-section-title">✦ Categories</div>
+      <div class="edit-note">To rename categories or change questions permanently, update them in Supabase.</div>
       <div class="edit-categories-row" id="edit-categories-row"></div>
     </div>
-
     <div class="edit-section">
       <div class="edit-section-title">✦ Questions & Answers</div>
       <div class="edit-questions-tabs" id="edit-questions-tabs"></div>
       <div class="edit-q-list" id="edit-q-list"></div>
     </div>
-
     <div style="display:flex; align-items:center; gap:16px;">
       <button class="edit-save-btn" onclick="saveEdits()">✓ SAVE CHANGES</button>
       <div class="edit-saved-note" id="edit-saved-note">Saved! ✦</div>
@@ -745,62 +779,61 @@
 <div class="fun-toast" id="fun-toast"></div>
 
 <script>
-/* ─────────────── DATA ─────────────── */
-let CATEGORIES = [
-  "Fake News",
-  "Wha Wha WHAAAA",
-  "Plot Summaries Gone Wrong",
-  "My Heart",
-  "A Whole New World",
-  "Bigfoot is Real"
-];
+/* ─────────────── DATA (populated from Supabase) ─────────────── */
+let CATEGORIES = [];
+let QUESTIONS = [];
+let TOTAL = 0;
 
-let QUESTIONS = [
-  [ // Fake News
-    { q: "This animal is commonly believed to remember things for only a few seconds.", a: "What is a goldfish?", fun: "GREAT JOB", val: 200 },
-    { q: "This Wonder of the World is not visible from space with the naked eye, despite popular belief.", a: "What is the Great Wall of China?", fun: "U SO SEXY", val: 400 },
-    { q: "A common misconception is that cracking your knuckles will cause this degenerative disease.", a: "What is arthritis?", fun: "Hubba Hubba", val: 600 },
-    { q: "Many people believe that humans only access this % amount of their brain — the premise for the movie Lucy with ScarJo.", a: "What is 10%?", fun: "Wowww", val: 800 }
-  ],
-  [ // Wha Wha WHAAAA
-    { q: "This planet is known for having the shortest day.", a: "What is Jupiter?", fun: "Humpahumpa", val: 200 },
-    { q: "Bananas are classified as this type of fruit.", a: "What is a berry?", fun: "U SO SMAHT", val: 400 },
-    { q: "This is one of only two letters not found anywhere on the periodic table.", a: "What is the letter J or Q?", fun: "I lava you", val: 600 },
-    { q: "This country technically has no official capital.", a: "What is Switzerland?", fun: "Sexy nerd", val: 800 }
-  ],
-  [ // Plot Summaries Gone Wrong
-    { q: "A boy attends a boarding school and almost dies every year.", a: "What is Harry Potter?", fun: "Wowza ;)", val: 200 },
-    { q: "A wealthy man beats people up to deal with unresolved trauma.", a: "What is Batman?", fun: "DADDY?", val: 400 },
-    { q: "Baking causes British people to have multiple emotional breakdowns.", a: "What is The Great British Bake-Off?", fun: "Happy Happy Joy Joy", val: 600 },
-    { q: "A kid's unresolved daddy issues escalate into a galactic civil war.", a: "What is Star Wars?", fun: "Rainbow Connection", val: 800 }
-  ],
-  [ // My Heart
-    { q: "Our ring engravings have this many characters.", a: "What is 16?", fun: "Mhmmm", val: 200 },
-    { q: "I am allergic to a lot of things. These are the only three nuts I'm not allergic to.", a: "What are hazelnuts, peanuts, and almonds?", fun: "My knight", val: 400 },
-    { q: "In high school, I studied abroad in this city, focusing on fashion and design.", a: "What is Hong Kong?", fun: "Ur mine!", val: 600 },
-    { q: "Human organs are generally symmetrical. I was born with one of these larger than the other.", a: "What are kidneys?", fun: "Hehehe", val: 800 }
-  ],
-  [ // A Whole New World
-    { q: "Mickey Mouse made his official debut with Steamboat Willie in this year.", a: "What is 1928?", fun: "Clocked it", val: 200 },
-    { q: "This Pixar film was the first animated movie ever nominated for Best Picture at the Oscars.", a: "What is Up?", fun: "My baby?", val: 400 },
-    { q: "This Disney princess is the only one with a visible tattoo.", a: "Who is Pocahontas?", fun: "PANTIES OFF", val: 600 },
-    { q: "This Disney villain has the most on-screen deaths directly attributed to them.", a: "Who is Scar?", fun: "WOMP WOMP", val: 800 }
-  ],
-  [ // Bigfoot is Real
-    { q: "Two famous bands had a member die in the same bed, in the same apartment. Name one of the bands.", a: "Who are Mamas and the Papas (Mama Cass Elliot) or The Who (Keith Moon)?", fun: "OH NAUR", val: 200 },
-    { q: "People believe that this artist did not commit suicide, but was in fact murdered by his wife, Courtney Love.", a: "Who is Kurt Cobain?", fun: "OH NAUR", val: 400 },
-    { q: "People claim that this Led Zeppelin song is backmasking the lines 'Here's to my sweet Satan'.", a: "What is Stairway to Heaven?", fun: "OH NAUR", val: 600 },
-    { q: "This Beatles member is believed by some fans to have died in 1966 and been replaced.", a: "Who is Paul McCartney?", fun: "OH NAUR", val: 800 }
-  ]
-];
+async function loadFromSupabase() {
+  try {
+    const SUPABASE_URL = 'https://ljjoyymeoeeexdciszas.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_eB99f8drohy2kMNpLUFaZg_xC21f5x2';
+
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/questions?select=*&order=value.asc',
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error('HTTP ' + res.status + ': ' + text);
+    }
+
+    const data = await res.json();
+    if (!data || data.length === 0) throw new Error('No questions found in the database.');
+
+    const catOrder = [...new Set(data.map(r => r.category))];
+    CATEGORIES = catOrder;
+    QUESTIONS = catOrder.map(cat =>
+      data
+        .filter(r => r.category === cat)
+        .sort((a, b) => a.value - b.value)
+        .map(r => ({ q: r.question, a: r.answer, fun: r.reaction || '✦', val: r.value }))
+    );
+    TOTAL = data.length;
+
+    showScreen('title');
+  } catch (err) {
+    console.error('Supabase load error:', err);
+    const errEl = document.getElementById('loading-error');
+    errEl.style.display = 'block';
+    errEl.textContent = 'Could not load questions: ' + (err.message || JSON.stringify(err));
+    document.getElementById('loading-dots').style.display = 'none';
+  }
+}
 
 /* ─────────────── STATE ─────────────── */
-let players = [];  // { name, score }
+let players = [];
 let answered = 0;
-let used = Array.from({length: 6}, () => Array(4).fill(false));
+let used = [];
 let current = null;
-let currentJudged = []; // track which players judged for current Q
-const TOTAL = 24;
+let currentJudged = [];
 
 /* ─────────────── SETUP ─────────────── */
 let selectedPlayerCount = 2;
@@ -843,7 +876,7 @@ function startGame() {
     players.push({ name: inp.value.trim() || defaults[i], score: 0 });
   });
   answered = 0;
-  used = Array.from({length: 6}, () => Array(4).fill(false));
+  used = CATEGORIES.map(() => QUESTIONS[0].map(() => false));
   buildBoard();
   showScreen('board');
 }
@@ -856,12 +889,15 @@ function goSetup() {
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'edit') buildEditScreen();
 }
 
 /* ─────────────── BOARD ─────────────── */
 function buildBoard() {
   const grid = document.getElementById('board-grid');
   grid.innerHTML = '';
+  const numCols = CATEGORIES.length;
+  grid.style.gridTemplateColumns = `repeat(${numCols}, 1fr)`;
 
   CATEGORIES.forEach(cat => {
     const el = document.createElement('div');
@@ -870,8 +906,9 @@ function buildBoard() {
     grid.appendChild(el);
   });
 
-  for (let row = 0; row < 4; row++) {
-    for (let col = 0; col < 6; col++) {
+  const numRows = QUESTIONS[0] ? QUESTIONS[0].length : 0;
+  for (let row = 0; row < numRows; row++) {
+    for (let col = 0; col < numCols; col++) {
       const q = QUESTIONS[col][row];
       const tile = document.createElement('div');
       tile.className = 'tile' + (used[col][row] ? ' used' : '');
@@ -910,7 +947,7 @@ function updateScoreUI() {
 /* ─────────────── QUESTION ─────────────── */
 function openQuestion(col, row) {
   current = { col, row };
-  currentJudged = players.map(() => null); // null = not yet judged
+  currentJudged = players.map(() => null);
 
   const q = QUESTIONS[col][row];
   document.getElementById('q-cat-label').textContent = CATEGORIES[col].toUpperCase();
@@ -922,7 +959,6 @@ function openQuestion(col, row) {
   document.getElementById('btn-reveal').style.display = 'block';
   document.getElementById('judge-area').classList.remove('visible');
 
-  // Hide reaction banner
   const rb = document.getElementById('reaction-banner');
   rb.classList.remove('visible');
   rb.textContent = '';
@@ -938,10 +974,8 @@ function revealAnswer() {
   document.getElementById('btn-reveal').style.display = 'none';
   document.getElementById('judge-area').classList.add('visible');
 
-  // Show the reaction banner (always, regardless of score)
   const rb = document.getElementById('reaction-banner');
-  rb.textContent = '';
-  rb.innerHTML = '✦ ' + q.fun + ' ✦';
+  rb.textContent = '✦ ' + q.fun + ' ✦';
   rb.classList.add('visible');
 
   buildPlayerJudgeList();
@@ -953,7 +987,6 @@ function buildPlayerJudgeList() {
   players.forEach((p, i) => {
     const row = document.createElement('div');
     row.className = 'player-judge-row';
-    row.id = 'pj-row-' + i;
 
     const nameEl = document.createElement('div');
     nameEl.className = 'pj-name';
@@ -987,7 +1020,6 @@ function buildPlayerJudgeList() {
 function judgePlayer(playerIdx, correct) {
   const { col, row } = current;
   const q = QUESTIONS[col][row];
-
   currentJudged[playerIdx] = correct;
   if (correct) {
     players[playerIdx].score += q.val;
@@ -1014,12 +1046,9 @@ function finishQuestion() {
 
 function showGameOver() {
   const sorted = [...players].sort((a, b) => b.score - a.score);
-  const winnerScore = sorted[0].score;
-
   const list = document.getElementById('final-players-list');
   list.innerHTML = '';
 
-  // Winner badge
   if (players.length > 1) {
     const badge = document.createElement('div');
     badge.className = 'winner-badge';
@@ -1054,15 +1083,6 @@ function showToast(msg, type) {
   toast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
-/* ─────────────── RESET ─────────────── */
-function resetGame() {
-  players.forEach(p => p.score = 0);
-  answered = 0;
-  used = Array.from({length: 6}, () => Array(4).fill(false));
-  buildBoard();
-  showScreen('board');
-}
-
 /* ─────────────── EDIT MODE ─────────────── */
 let editActiveTab = 0;
 
@@ -1088,8 +1108,9 @@ function buildEditScreen() {
     });
   });
 
-  // Categories
+  // Categories (read-only display)
   const catRow = document.getElementById('edit-categories-row');
+  catRow.style.gridTemplateColumns = `repeat(${Math.min(CATEGORIES.length, 6)}, 1fr)`;
   catRow.innerHTML = '';
   CATEGORIES.forEach((cat, i) => {
     const input = document.createElement('input');
@@ -1101,6 +1122,11 @@ function buildEditScreen() {
   });
 
   // Tabs
+  buildEditTabs();
+  buildEditQuestionList();
+}
+
+function buildEditTabs() {
   const tabs = document.getElementById('edit-questions-tabs');
   tabs.innerHTML = '';
   CATEGORIES.forEach((cat, i) => {
@@ -1109,15 +1135,6 @@ function buildEditScreen() {
     btn.textContent = cat.slice(0, 14);
     btn.onclick = () => { editActiveTab = i; buildEditQuestionList(); buildEditTabs(); };
     tabs.appendChild(btn);
-  });
-
-  buildEditQuestionList();
-}
-
-function buildEditTabs() {
-  const tabs = document.getElementById('edit-questions-tabs');
-  tabs.querySelectorAll('.edit-tab').forEach((btn, i) => {
-    btn.classList.toggle('active', i === editActiveTab);
   });
 }
 
@@ -1155,33 +1172,21 @@ function buildEditQuestionList() {
 function saveEdits() {
   // Save reactions
   document.querySelectorAll('#edit-reactions-grid input').forEach(inp => {
-    const ci = parseInt(inp.dataset.col);
-    const ri = parseInt(inp.dataset.row);
-    QUESTIONS[ci][ri].fun = inp.value;
+    QUESTIONS[parseInt(inp.dataset.col)][parseInt(inp.dataset.row)].fun = inp.value;
   });
-  // Save categories
+  // Save categories (local display only)
   document.querySelectorAll('#edit-categories-row input').forEach(inp => {
     CATEGORIES[parseInt(inp.dataset.catIdx)] = inp.value;
   });
-  // Save questions/answers
-  document.querySelectorAll('#edit-q-list textarea, #edit-q-list input').forEach(inp => {
-    const ci = parseInt(inp.dataset.col);
-    const ri = parseInt(inp.dataset.row);
-    QUESTIONS[ci][ri][inp.dataset.field] = inp.value;
+  // Save questions/answers (local only)
+  document.querySelectorAll('#edit-q-list textarea, #edit-q-list input[data-field]').forEach(inp => {
+    QUESTIONS[parseInt(inp.dataset.col)][parseInt(inp.dataset.row)][inp.dataset.field] = inp.value;
   });
 
   const note = document.getElementById('edit-saved-note');
   note.classList.add('visible');
   setTimeout(() => note.classList.remove('visible'), 2000);
   buildBoard();
-}
-
-// Rebuild edit screen whenever entering it
-const origShowScreen = showScreen;
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  if (name === 'edit') buildEditScreen();
 }
 
 /* ─────────────── CONFETTI ─────────────── */
@@ -1204,14 +1209,12 @@ function launchConfetti() {
     shape: Math.random() > 0.5 ? 'rect' : 'circle'
   }));
 
-  let angle = 0;
-  let frame = 0;
+  let angle = 0, frame = 0;
   const maxFrames = 280;
 
   function drawConfetti() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    angle += 0.01;
-    frame++;
+    angle += 0.01; frame++;
     pieces.forEach(p => {
       p.tiltAngle += p.tiltAngleInc;
       p.y += (Math.cos(angle + p.d) + 2 + p.r / 5) * 1.6;
@@ -1231,23 +1234,20 @@ function launchConfetti() {
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
-      if (p.y > canvas.height) {
-        p.x = Math.random() * canvas.width;
-        p.y = -20;
-      }
+      if (p.y > canvas.height) { p.x = Math.random() * canvas.width; p.y = -20; }
     });
-    if (frame < maxFrames) {
-      requestAnimationFrame(drawConfetti);
-    } else {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    if (frame < maxFrames) requestAnimationFrame(drawConfetti);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   drawConfetti();
 }
 
 /* ─────────────── INIT ─────────────── */
-setPlayerCount(2);
-buildPlayerNameInputs();
+document.addEventListener('DOMContentLoaded', () => {
+  setPlayerCount(2);
+  buildPlayerNameInputs();
+  loadFromSupabase();
+});
 </script>
 </body>
 </html>
