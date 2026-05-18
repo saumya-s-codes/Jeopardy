@@ -517,7 +517,10 @@
   }
   .edit-reaction-item input:focus { border-color: var(--black); }
   .edit-categories-row {
-    display: grid; gap: 8px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .edit-categories-row input {
+    flex: 1 1 120px; min-width: 0;
   }
   .edit-cat-input {
     font-family: 'Pixelify Sans', monospace;
@@ -690,6 +693,8 @@
     <button class="player-count-btn" onclick="setPlayerCount(4)">4</button>
     <button class="player-count-btn" onclick="setPlayerCount(5)">5</button>
     <button class="player-count-btn" onclick="setPlayerCount(6)">6</button>
+    <button class="player-count-btn" onclick="setPlayerCount(7)">7</button>
+    <button class="player-count-btn" onclick="setPlayerCount(8)">8</button>
   </div>
   <div class="player-names-area" id="player-names-area"></div>
   <button class="setup-start-btn" onclick="startGame()">LET'S PLAY ✦</button>
@@ -742,7 +747,7 @@
 <div id="screen-edit" class="screen">
   <div class="edit-header">
     <div class="edit-title">✎ EDIT MODE</div>
-    <button class="edit-back-btn" onclick="showScreen('board')">← BACK</button>
+    <button class="edit-back-btn" onclick="saveEdits().then(() => showScreen('board'))">✓ SAVE & BACK</button>
   </div>
   <div class="edit-body">
     <div class="edit-section">
@@ -760,7 +765,6 @@
       <div class="edit-q-list" id="edit-q-list"></div>
     </div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <button class="edit-save-btn" onclick="saveEdits()">✓ SAVE CHANGES</button>
       <div class="edit-saved-note" id="edit-saved-note">Saved! ✦</div>
     </div>
   </div>
@@ -851,7 +855,7 @@ function buildPlayerNameInputs() {
   const existing = area.querySelectorAll('input');
   const existingVals = Array.from(existing).map(i => i.value);
   area.innerHTML = '';
-  const defaults = ['Player 1','Player 2','Player 3','Player 4','Player 5','Player 6'];
+  const defaults = ['Player 1','Player 2','Player 3','Player 4','Player 5','Player 6','Player 7','Player 8'];
   for (let i = 0; i < selectedPlayerCount; i++) {
     const row = document.createElement('div');
     row.className = 'player-name-input';
@@ -870,7 +874,7 @@ function buildPlayerNameInputs() {
 
 function startGame() {
   const inputs = document.querySelectorAll('#player-names-area input');
-  const defaults = ['Player 1','Player 2','Player 3','Player 4','Player 5','Player 6'];
+  const defaults = ['Player 1','Player 2','Player 3','Player 4','Player 5','Player 6','Player 7','Player 8'];
   players = [];
   inputs.forEach((inp, i) => {
     players.push({ name: inp.value.trim() || defaults[i], score: 0 });
@@ -1110,7 +1114,7 @@ function buildEditScreen() {
 
   // Categories (read-only display)
   const catRow = document.getElementById('edit-categories-row');
-  catRow.style.gridTemplateColumns = `repeat(${Math.min(CATEGORIES.length, 6)}, 1fr)`;
+  
   catRow.innerHTML = '';
   CATEGORIES.forEach((cat, i) => {
     const input = document.createElement('input');
