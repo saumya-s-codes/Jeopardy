@@ -9,11 +9,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --yellow: #FFDC03;
-    --yellow-dark: #e6c800;
-    --black: #1a1a1a;
-    --white: #ffffff;
-    --off-white: #F0EEE2;
+    /* ── FIXED UTILITY COLORS ── */
     --green: #22c55e;
     --green-dark: #15803d;
     --red: #ef4444;
@@ -23,22 +19,27 @@
     --teal: #8BCAC6;
     --orange: #FF9900;
 
-    /* ── THEME VARS (overridden by theme system) ── */
+    /* ── THEME VARS — set by JS ── */
     --theme-bg: #FFDC03;
     --theme-primary: #1a1a1a;
     --theme-secondary: #ffffff;
-    --theme-accent: #FFDC03;
     --theme-tile: #ffffff;
     --theme-font-display: 'Anton', sans-serif;
     --theme-font-body: 'Pixelify Sans', monospace;
     --theme-font-question: 'Averia Libre', serif;
-    --theme-bg-image: none;
+
+    /* ── SEMANTIC ALIASES — all CSS uses these ── */
+    --yellow: var(--theme-bg);
+    --yellow-dark: var(--theme-bg);
+    --black: var(--theme-primary);
+    --white: var(--theme-secondary);
+    --off-white: var(--theme-tile);
   }
 
   html, body {
     height: 100%;
     background: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     color: var(--black);
     overflow-x: hidden;
   }
@@ -55,20 +56,20 @@
     gap: 24px;
   }
   .loading-title {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 48px;
     color: var(--black);
     letter-spacing: 2px;
   }
   .loading-dots {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 18px;
     letter-spacing: 4px;
     color: rgba(0,0,0,0.5);
     animation: blink 1.2s infinite;
   }
   .loading-error {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 16px;
     color: var(--red-dark);
     letter-spacing: 1px;
@@ -93,7 +94,7 @@
     opacity: 0.18;
   }
   #screen-title h1 {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 96px;
     line-height: 1.0;
     color: var(--black);
@@ -102,7 +103,7 @@
   }
   #screen-title h1 span { display: block; font-size: 72px; }
   #screen-title .sub {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 18px; letter-spacing: 3px;
     color: var(--black); margin-top: 24px;
     position: relative; z-index: 1;
@@ -110,7 +111,7 @@
   #screen-title .start-btn {
     margin-top: 60px;
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 22px; font-weight: 700;
     border: none; padding: 18px 52px;
     cursor: pointer; letter-spacing: 2px;
@@ -129,14 +130,14 @@
     gap: 32px;
   }
   #screen-setup h2 {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 52px;
     color: var(--black);
     letter-spacing: 2px;
     text-align: center;
   }
   .setup-subtitle {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 16px; letter-spacing: 2px;
     color: rgba(0,0,0,0.55); text-align: center;
   }
@@ -148,7 +149,7 @@
     width: 72px; height: 72px;
     border: 3px solid var(--black);
     background: var(--white);
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 32px; cursor: pointer;
     transition: all 0.12s;
     display: flex; align-items: center; justify-content: center;
@@ -164,13 +165,13 @@
     display: flex; align-items: center; gap: 12px;
   }
   .player-name-input label {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; letter-spacing: 2px;
     min-width: 80px; color: var(--black);
   }
   .player-name-input input {
     flex: 1;
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 18px; font-weight: 700;
     border: 3px solid var(--black);
     background: var(--white);
@@ -181,7 +182,7 @@
   .player-name-input input:focus { background: var(--off-white); }
   .setup-start-btn {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 20px; font-weight: 700;
     border: none; padding: 16px 48px;
     cursor: pointer; letter-spacing: 2px;
@@ -205,7 +206,7 @@
     flex-wrap: wrap; gap: 10px;
   }
   .board-title {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 36px; color: var(--black);
     letter-spacing: 2px;
   }
@@ -215,7 +216,7 @@
   }
   .player-score-pill {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 15px; font-weight: 700;
     padding: 8px 18px;
     display: flex; flex-direction: column;
@@ -233,7 +234,7 @@
   }
   .cat-header {
     background: var(--black); color: var(--white);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; font-weight: 700;
     text-align: center; padding: 14px 8px;
     min-height: 80px;
@@ -272,7 +273,7 @@
   }
   .board-btns { display: flex; gap: 8px; }
   .reset-link {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; color: var(--black);
     background: none; border: 2px solid var(--black);
     padding: 6px 16px; cursor: pointer;
@@ -281,7 +282,7 @@
   }
   .reset-link:hover { background: var(--black); color: var(--yellow); }
   .edit-link {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; color: var(--black);
     background: none; border: 2px solid var(--black);
     padding: 6px 16px; cursor: pointer;
@@ -303,18 +304,18 @@
   }
   .q-meta { display: flex; flex-direction: column; gap: 4px; }
   .q-category {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 20px; font-weight: 700;
     color: var(--black); letter-spacing: 1px;
     text-transform: uppercase;
   }
   .q-value {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 26px; font-weight: 700; color: var(--black);
   }
   .q-back-btn {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; border: none;
     padding: 8px 18px; cursor: pointer;
     letter-spacing: 1px;
@@ -328,7 +329,7 @@
     align-self: flex-start;
   }
   .q-text {
-    font-family: 'Averia Libre', serif;
+    font-family: var(--theme-font-question);
     font-size: clamp(28px, 4vw, 52px);
     line-height: 1.35; color: var(--black);
     margin-bottom: 32px;
@@ -344,7 +345,7 @@
   .answer-box.visible { display: block; }
   @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .answer-box .ans-label {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 12px; letter-spacing: 3px;
     text-transform: uppercase;
     color: rgba(255,220,3,0.6); margin-bottom: 8px;
@@ -358,7 +359,7 @@
   .reaction-banner {
     display: none;
     margin-bottom: 20px;
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 22px; font-weight: 700;
     font-style: italic;
     letter-spacing: 2px;
@@ -375,7 +376,7 @@
   }
   .btn-reveal {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 20px; font-weight: 700;
     border: none; padding: 18px 48px;
     cursor: pointer; letter-spacing: 2px;
@@ -389,7 +390,7 @@
   .judge-area { display: none; width: 100%; }
   .judge-area.visible { display: block; }
   .judge-label {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; letter-spacing: 3px;
     color: rgba(0,0,0,0.5); margin-bottom: 10px;
     text-transform: uppercase;
@@ -402,7 +403,7 @@
     display: flex; align-items: center; gap: 8px;
   }
   .pj-name {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; font-weight: 700;
     letter-spacing: 1px; min-width: 100px;
     text-transform: uppercase;
@@ -410,7 +411,7 @@
   }
   .pj-wrong {
     flex: 1; background: var(--red); color: var(--white);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 16px; font-weight: 700;
     border: none; padding: 12px 0;
     cursor: pointer; letter-spacing: 1px;
@@ -420,7 +421,7 @@
   .pj-wrong:active { transform: scale(0.97); }
   .pj-right {
     flex: 1; background: var(--green); color: var(--white);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 16px; font-weight: 700;
     border: none; padding: 12px 0;
     cursor: pointer; letter-spacing: 1px;
@@ -429,7 +430,7 @@
   .pj-right:hover { background: var(--green-dark); }
   .pj-right:active { transform: scale(0.97); }
   .pj-judged {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; padding: 12px 16px;
     opacity: 0.55; flex: 1; text-align: center;
     border: 2px solid rgba(0,0,0,0.2);
@@ -437,7 +438,7 @@
 
   .done-btn {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 16px; font-weight: 700;
     border: none; padding: 12px 32px;
     cursor: pointer; letter-spacing: 2px;
@@ -466,7 +467,7 @@
 
   /* ── EDIT SCREEN ── */
   #screen-edit {
-    background: var(--off-white);
+    background: var(--theme-bg);
     padding: 24px;
     align-items: center;
   }
@@ -476,13 +477,13 @@
     justify-content: space-between; margin-bottom: 20px;
   }
   .edit-title {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 36px; color: var(--black);
     letter-spacing: 2px;
   }
   .edit-back-btn {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; border: none;
     padding: 10px 22px; cursor: pointer; letter-spacing: 1px;
     transition: background 0.12s;
@@ -493,18 +494,18 @@
     display: flex; flex-direction: column; gap: 16px;
   }
   .edit-section {
-    background: var(--white);
-    border: 3px solid var(--black);
+    background: var(--theme-secondary);
+    border: 3px solid var(--theme-primary);
     padding: 16px 20px;
   }
   .edit-section-title {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; letter-spacing: 3px;
     text-transform: uppercase; color: rgba(0,0,0,0.5);
     margin-bottom: 12px;
   }
   .edit-note {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 12px; color: rgba(0,0,0,0.4);
     letter-spacing: 1px; margin-bottom: 10px;
     font-style: italic;
@@ -517,11 +518,11 @@
     display: flex; flex-direction: column; gap: 4px;
   }
   .edit-reaction-item label {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
   }
   .edit-reaction-item input {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; border: 2px solid #ccc;
     padding: 6px 10px; outline: none;
     transition: border-color 0.12s;
@@ -534,7 +535,7 @@
     flex: 1 1 120px; min-width: 0;
   }
   .edit-cat-input {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; border: 2px solid #ccc;
     padding: 8px; outline: none; text-align: center;
     font-weight: 700;
@@ -545,7 +546,7 @@
     display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px;
   }
   .edit-tab {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 12px; letter-spacing: 1px;
     padding: 6px 14px; cursor: pointer;
     border: 2px solid var(--black);
@@ -560,7 +561,7 @@
     gap: 8px; align-items: start;
   }
   .edit-q-row label {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 12px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
     padding-top: 8px; text-align: right; padding-right: 4px;
   }
@@ -573,7 +574,7 @@
   .edit-q-row input:focus, .edit-q-row textarea:focus { border-color: var(--black); }
   .edit-save-btn {
     background: var(--green); color: var(--white);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 16px; font-weight: 700;
     border: none; padding: 14px 40px;
     cursor: pointer; letter-spacing: 2px;
@@ -583,7 +584,7 @@
   }
   .edit-save-btn:hover { background: var(--green-dark); }
   .edit-saved-note {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; color: var(--green-dark);
     letter-spacing: 1px; margin-top: 8px;
     opacity: 0; transition: opacity 0.3s;
@@ -604,7 +605,7 @@
     align-items: center; gap: 20px;
   }
   #screen-gameover h2 {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 80px; color: var(--black); line-height: 1;
   }
   .final-players-list {
@@ -617,7 +618,7 @@
     padding: 12px 24px;
   }
   .final-player-row .fp-name {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 16px; letter-spacing: 2px; text-transform: uppercase;
   }
   .final-player-row .fp-score {
@@ -630,7 +631,7 @@
     border: 4px solid var(--black);
   }
   .winner-badge {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
     background: var(--yellow); color: var(--black);
     padding: 4px 10px; margin-bottom: 8px;
@@ -638,7 +639,7 @@
   }
   .play-again {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 22px; font-weight: 700;
     border: none; padding: 18px 52px;
     cursor: pointer; letter-spacing: 2px; margin-top: 20px;
@@ -672,7 +673,7 @@
 
   /* ── THEME SCREEN ── */
   #screen-theme {
-    background: var(--off-white);
+    background: var(--theme-bg);
     padding: 24px;
     align-items: center;
     overflow-y: auto;
@@ -683,12 +684,12 @@
     justify-content: space-between; margin-bottom: 24px;
   }
   .theme-title {
-    font-family: 'Anton', sans-serif;
+    font-family: var(--theme-font-display);
     font-size: 36px; color: var(--black); letter-spacing: 2px;
   }
   .theme-save-btn {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; border: none;
     padding: 10px 22px; cursor: pointer; letter-spacing: 1px;
     transition: background 0.12s;
@@ -704,9 +705,10 @@
     padding: 20px;
   }
   .theme-section-title {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; letter-spacing: 3px;
-    text-transform: uppercase; color: rgba(0,0,0,0.5);
+    text-transform: uppercase; color: var(--black);
+    opacity: 0.6;
     margin-bottom: 16px;
   }
 
@@ -728,10 +730,10 @@
     height: 64px;
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 700; letter-spacing: 1px;
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
   }
   .preset-label {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 11px; letter-spacing: 1px;
     padding: 6px; text-align: center;
     background: var(--off-white);
@@ -748,8 +750,9 @@
     display: flex; flex-direction: column; gap: 6px;
   }
   .color-item label {
-    font-family: 'Pixelify Sans', monospace;
-    font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+    font-family: var(--theme-font-body);
+    font-size: 11px; letter-spacing: 1px; color: var(--black);
+    opacity: 0.6;
     text-transform: uppercase;
   }
   .color-row {
@@ -763,9 +766,10 @@
   }
   .color-hex {
     font-family: 'Courier New', monospace;
-    font-size: 13px; border: 2px solid #ccc;
+    font-size: 13px; border: 2px solid var(--black);
     padding: 6px 8px; width: 90px;
     outline: none; text-transform: uppercase;
+    background: var(--white); color: var(--black);
   }
   .color-hex:focus { border-color: var(--black); }
 
@@ -777,14 +781,15 @@
   }
   .font-group { display: flex; flex-direction: column; gap: 6px; }
   .font-group label {
-    font-family: 'Pixelify Sans', monospace;
-    font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+    font-family: var(--theme-font-body);
+    font-size: 11px; letter-spacing: 1px; color: var(--black);
+    opacity: 0.6;
     text-transform: uppercase;
   }
   .font-select {
-    font-size: 14px; border: 2px solid #ccc;
+    font-size: 14px; border: 2px solid var(--black);
     padding: 8px; outline: none; cursor: pointer;
-    background: var(--white);
+    background: var(--white); color: var(--black);
     transition: border-color 0.12s;
   }
   .font-select:focus { border-color: var(--black); }
@@ -795,14 +800,16 @@
   }
   .brand-item { display: flex; flex-direction: column; gap: 6px; }
   .brand-item label {
-    font-family: 'Pixelify Sans', monospace;
-    font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+    font-family: var(--theme-font-body);
+    font-size: 11px; letter-spacing: 1px; color: var(--black);
+    opacity: 0.6;
     text-transform: uppercase;
   }
   .brand-item input {
-    font-family: 'Pixelify Sans', monospace;
-    font-size: 16px; border: 2px solid #ccc;
+    font-family: var(--theme-font-body);
+    font-size: 16px; border: 2px solid var(--black);
     padding: 10px; outline: none;
+    background: var(--white); color: var(--black);
     transition: border-color 0.12s;
   }
   .brand-item input:focus { border-color: var(--black); }
@@ -825,10 +832,10 @@
   .bg-pattern-swatch {
     height: 60px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
+    font-size: 20px; background: var(--white); color: var(--black);
   }
   .bg-pattern-label {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 10px; letter-spacing: 1px;
     padding: 4px; text-align: center;
     background: var(--off-white); color: var(--black);
@@ -838,21 +845,85 @@
   }
   .bg-upload-btn {
     background: var(--black); color: var(--yellow);
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 13px; border: none;
     padding: 10px 20px; cursor: pointer; letter-spacing: 1px;
   }
   .bg-upload-preview {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 12px; color: rgba(0,0,0,0.5);
   }
   .theme-saved-note {
-    font-family: 'Pixelify Sans', monospace;
+    font-family: var(--theme-font-body);
     font-size: 14px; color: var(--green-dark);
     letter-spacing: 1px;
     opacity: 0; transition: opacity 0.3s;
   }
   .theme-saved-note.visible { opacity: 1; }
+
+  /* ── THEME PREVIEW CARDS ── */
+  .theme-preview-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .preview-card {
+    border: 2px solid rgba(0,0,0,0.15);
+    overflow: hidden;
+    position: relative;
+  }
+  .preview-card-label {
+    font-family: var(--theme-font-body);
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(0,0,0,0.4);
+    margin-bottom: 6px;
+  }
+  /* Title card preview */
+  .prev-title {
+    height: 120px;
+    display: flex; flex-direction: column;
+    align-items: flex-start; justify-content: center;
+    padding: 12px;
+  }
+  .prev-title-h { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .prev-title-sub { font-size: 8px; letter-spacing: 2px; margin-top: 4px; opacity: 0.6; }
+  .prev-title-btn { font-size: 8px; margin-top: 8px; padding: 4px 10px; border: none; cursor: default; letter-spacing: 1px; }
+  /* Score card preview */
+  .prev-score {
+    height: 120px;
+    display: flex; flex-direction: column;
+    padding: 10px; gap: 6px;
+  }
+  .prev-score-bar {
+    display: flex; gap: 4px;
+  }
+  .prev-score-pill {
+    flex: 1; padding: 4px 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+  }
+  .prev-score-name { font-size: 7px; letter-spacing: 1px; opacity: 0.6; }
+  .prev-score-val { font-size: 12px; font-weight: 700; font-family: 'Courier New', monospace; }
+  .prev-score-tiles {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; flex: 1;
+  }
+  .prev-tile {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; font-family: 'Courier New', monospace;
+  }
+  /* Question card preview */
+  .prev-question {
+    height: 120px;
+    display: flex; flex-direction: column;
+    padding: 12px; gap: 8px; justify-content: center;
+  }
+  .prev-q-cat { font-size: 8px; letter-spacing: 2px; font-weight: 700; opacity: 0.7; }
+  .prev-q-text { font-size: 11px; line-height: 1.4; }
+  .prev-q-btn { font-size: 8px; padding: 4px 10px; border: none; cursor: default; align-self: flex-start; }
+  @media (max-width: 600px) {
+    .theme-preview-row { grid-template-columns: 1fr; }
+    .prev-title, .prev-score, .prev-question { height: 100px; }
+  }
 </style>
 </head>
 <body>
@@ -977,6 +1048,53 @@
     </div>
   </div>
   <div class="theme-body">
+
+
+    <!-- LIVE PREVIEW -->
+    <div class="theme-section">
+      <div class="theme-section-title">✦ Live Preview</div>
+      <div class="theme-preview-row">
+        <div>
+          <div class="preview-card-label">Title Screen</div>
+          <div class="preview-card" id="prev-title-card">
+            <div class="prev-title" id="prev-title-inner">
+              <div class="prev-title-h" id="prev-title-text">Welcome to<br><strong id="prev-game-name">Game Night</strong></div>
+              <div class="prev-title-sub" id="prev-sub-text">A SAUMYA STUDIO PRODUCTION</div>
+              <div class="prev-title-btn" id="prev-start-btn">START GAME</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="preview-card-label">Score Board</div>
+          <div class="preview-card" id="prev-score-card">
+            <div class="prev-score" id="prev-score-inner">
+              <div class="prev-score-bar" id="prev-score-bar">
+                <div class="prev-score-pill" id="prev-pill-1"><div class="prev-score-name">P1</div><div class="prev-score-val">$400</div></div>
+                <div class="prev-score-pill" id="prev-pill-2"><div class="prev-score-name">P2</div><div class="prev-score-val">$200</div></div>
+              </div>
+              <div class="prev-score-tiles" id="prev-tiles">
+                <div class="prev-tile" id="prev-t1">$200</div>
+                <div class="prev-tile" id="prev-t2">$400</div>
+                <div class="prev-tile" id="prev-t3">$600</div>
+                <div class="prev-tile" id="prev-t4">$800</div>
+                <div class="prev-tile" id="prev-t5" style="opacity:0.3">✓</div>
+                <div class="prev-tile" id="prev-t6">$200</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="preview-card-label">Question Screen</div>
+          <div class="preview-card" id="prev-question-card">
+            <div class="prev-question" id="prev-question-inner">
+              <div class="prev-q-cat" id="prev-q-cat">CATEGORY NAME</div>
+              <div class="prev-q-text" id="prev-q-text">This is what your question text will look like on screen.</div>
+              <div class="prev-q-btn" id="prev-q-btn">REVEAL ANSWER</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- PRESETS -->
     <div class="theme-section">
@@ -1663,10 +1781,143 @@ let currentTheme = {
   bgImage: null,
   boardTitle: 'GAME NIGHT',
   homeTitle: 'Game Night',
-  homeTitleSpan: 'Game Night',
   homeSub: 'A SAUMYA STUDIO PRODUCTION',
   activePreset: 0
 };
+
+// ── READ current inputs into a snapshot object ──
+function readInputs() {
+  return {
+    bg: document.getElementById('c-bg')?.value || currentTheme.bg,
+    primary: document.getElementById('c-primary')?.value || currentTheme.primary,
+    secondary: document.getElementById('c-secondary')?.value || currentTheme.secondary,
+    tile: document.getElementById('c-tile')?.value || currentTheme.tile,
+    fontDisplay: document.getElementById('font-display')?.value || currentTheme.fontDisplay,
+    fontBody: document.getElementById('font-body')?.value || currentTheme.fontBody,
+    fontQuestion: document.getElementById('font-question')?.value || currentTheme.fontQuestion,
+    boardTitle: document.getElementById('brand-board')?.value || currentTheme.boardTitle,
+    homeTitle: document.getElementById('brand-title')?.value || currentTheme.homeTitle,
+    homeSub: document.getElementById('brand-sub')?.value || currentTheme.homeSub,
+    bgPattern: currentTheme.bgPattern,
+    bgImage: currentTheme.bgImage,
+    activePreset: currentTheme.activePreset,
+  };
+}
+
+// ── APPLY a theme snapshot to the page and previews ──
+function applySnapshot(t, save) {
+  const root = document.documentElement;
+  // Set theme CSS vars — all CSS automatically updates via var() aliases
+  root.style.setProperty('--theme-bg', t.bg);
+  root.style.setProperty('--theme-primary', t.primary);
+  root.style.setProperty('--theme-secondary', t.secondary);
+  root.style.setProperty('--theme-tile', t.tile);
+  root.style.setProperty('--theme-font-display', t.fontDisplay);
+  root.style.setProperty('--theme-font-body', t.fontBody);
+  root.style.setProperty('--theme-font-question', t.fontQuestion);
+
+  // Body font (CSS var doesn't reach font-family on body easily)
+  document.body.style.fontFamily = t.fontBody;
+
+  // Display font on key headings
+  document.querySelectorAll('.board-title, #screen-title h1, #screen-gameover h2, #screen-setup h2, .theme-title, .edit-title').forEach(el => {
+    el.style.fontFamily = t.fontDisplay;
+  });
+  document.querySelectorAll('.q-text').forEach(el => el.style.fontFamily = t.fontQuestion);
+
+  // Background image handling
+  if (t.bgImage) {
+    document.body.style.backgroundImage = `url(${t.bgImage})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.querySelectorAll('.screen').forEach(s => s.style.background = 'transparent');
+  } else {
+    document.body.style.backgroundImage = '';
+    document.body.style.backgroundSize = '';
+    document.body.style.backgroundPosition = '';
+    document.querySelectorAll('.screen').forEach(s => s.style.background = '');
+  }
+
+  // Pattern overlay
+  applyPattern(t.bgPattern, t.primary);
+
+  // Branding text
+  const boardTitleEl = document.getElementById('board-title-el');
+  if (boardTitleEl) boardTitleEl.textContent = t.boardTitle;
+  const homeTitleSpan = document.getElementById('home-title-span');
+  if (homeTitleSpan) homeTitleSpan.textContent = t.homeTitle;
+  const homeSubEl = document.getElementById('home-sub');
+  if (homeSubEl) homeSubEl.textContent = t.homeSub;
+
+  // Update preview cards
+  updatePreviews(t);
+
+  if (save) {
+    currentTheme = { ...currentTheme, ...t };
+    try { localStorage.setItem('jeopardy-theme', JSON.stringify(currentTheme)); } catch(e) {}
+  }
+}
+
+// ── LIVE PREVIEW updater ──
+function updatePreviews(t) {
+  // Title card
+  const tc = document.getElementById('prev-title-card');
+  const ti = document.getElementById('prev-title-inner');
+  if (tc && ti) {
+    tc.style.background = t.bgImage ? `url(${t.bgImage}) center/cover` : t.bg;
+    ti.style.color = t.primary;
+    const gn = document.getElementById('prev-game-name');
+    if (gn) { gn.textContent = t.homeTitle || 'Game Night'; gn.style.fontFamily = t.fontDisplay; }
+    const sub = document.getElementById('prev-sub-text');
+    if (sub) { sub.textContent = t.homeSub; sub.style.fontFamily = t.fontBody; }
+    const btn = document.getElementById('prev-start-btn');
+    if (btn) { btn.style.background = t.primary; btn.style.color = t.secondary; btn.style.fontFamily = t.fontBody; }
+  }
+
+  // Score card
+  const sc = document.getElementById('prev-score-card');
+  const si = document.getElementById('prev-score-inner');
+  if (sc && si) {
+    sc.style.background = t.bgImage ? `url(${t.bgImage}) center/cover` : t.bg;
+    si.style.color = t.primary;
+    // Score pills
+    [1,2].forEach(n => {
+      const pill = document.getElementById(`prev-pill-${n}`);
+      if (pill) { pill.style.background = t.primary; pill.style.color = t.secondary; pill.style.fontFamily = t.fontBody; }
+    });
+    // Tiles
+    [1,2,3,4,5,6].forEach(n => {
+      const tile = document.getElementById(`prev-t${n}`);
+      if (tile) {
+        tile.style.background = n === 5 ? t.primary + '44' : t.tile;
+        tile.style.color = t.primary;
+        tile.style.fontFamily = t.fontBody;
+        tile.style.border = `1px solid ${t.primary}44`;
+      }
+    });
+    // Board title
+    const bt = document.getElementById('board-title-el');
+  }
+
+  // Question card
+  const qc = document.getElementById('prev-question-card');
+  const qi = document.getElementById('prev-question-inner');
+  if (qc && qi) {
+    qc.style.background = t.bgImage ? `url(${t.bgImage}) center/cover` : t.bg;
+    qi.style.color = t.primary;
+    const cat = document.getElementById('prev-q-cat');
+    if (cat) { cat.style.fontFamily = t.fontBody; cat.style.color = t.primary; }
+    const qt = document.getElementById('prev-q-text');
+    if (qt) { qt.style.fontFamily = t.fontQuestion; qt.style.color = t.primary; }
+    const qb = document.getElementById('prev-q-btn');
+    if (qb) { qb.style.background = t.primary; qb.style.color = t.secondary; qb.style.fontFamily = t.fontBody; }
+  }
+}
+
+// ── Called on every input change ──
+function liveUpdate() {
+  applySnapshot(readInputs(), false);
+}
 
 function buildThemeScreen() {
   // Presets
@@ -1675,9 +1926,7 @@ function buildThemeScreen() {
   PRESETS.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.className = 'preset-btn' + (currentTheme.activePreset === i ? ' active' : '');
-    btn.innerHTML = `
-      <div class="preset-swatch" style="background:${p.bg};color:${p.primary}">${p.name}</div>
-      <div class="preset-label">${p.name}</div>`;
+    btn.innerHTML = `<div class="preset-swatch" style="background:${p.bg};color:${p.primary}">${p.name}</div><div class="preset-label">${p.name}</div>`;
     btn.onclick = () => applyPreset(i);
     pg.appendChild(btn);
   });
@@ -1688,13 +1937,12 @@ function buildThemeScreen() {
   BG_PATTERNS.forEach(pat => {
     const btn = document.createElement('button');
     btn.className = 'bg-pattern-btn' + (currentTheme.bgPattern === pat.value ? ' active' : '');
-    btn.innerHTML = `
-      <div class="bg-pattern-swatch" style="background:#eee">${pat.icon}</div>
-      <div class="bg-pattern-label">${pat.name}</div>`;
+    btn.innerHTML = `<div class="bg-pattern-swatch" style="background:#eee">${pat.icon}</div><div class="bg-pattern-label">${pat.name}</div>`;
     btn.onclick = () => {
       currentTheme.bgPattern = pat.value;
       document.querySelectorAll('.bg-pattern-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      liveUpdate();
     };
     bgp.appendChild(btn);
   });
@@ -1706,9 +1954,9 @@ function buildThemeScreen() {
   setColorInput('c-tile', 'h-tile', currentTheme.tile);
 
   // Fonts
-  document.getElementById('font-display').value = currentTheme.fontDisplay;
-  document.getElementById('font-body').value = currentTheme.fontBody;
-  document.getElementById('font-question').value = currentTheme.fontQuestion;
+  setSelectValue('font-display', currentTheme.fontDisplay);
+  setSelectValue('font-body', currentTheme.fontBody);
+  setSelectValue('font-question', currentTheme.fontQuestion);
 
   // Branding
   document.getElementById('brand-board').value = currentTheme.boardTitle;
@@ -1717,116 +1965,86 @@ function buildThemeScreen() {
 
   // Upload preview
   document.getElementById('bg-upload-preview').textContent = currentTheme.bgImage ? 'Custom image set ✓' : 'No image uploaded';
+
+  // Wire all inputs to liveUpdate
+  ['c-bg','c-primary','c-secondary','c-tile','h-bg','h-primary','h-secondary','h-tile',
+   'font-display','font-body','font-question','brand-board','brand-title','brand-sub'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.oninput = () => { syncColorPair(id); liveUpdate(); };
+      el.onchange = () => { syncColorPair(id); liveUpdate(); };
+    }
+  });
+
+  // Initial preview render
+  updatePreviews(currentTheme);
 }
+
+function syncColorPair(id) {
+  const pairs = { 'c-bg':'h-bg','h-bg':'c-bg','c-primary':'h-primary','h-primary':'c-primary','c-secondary':'h-secondary','h-secondary':'c-secondary','c-tile':'h-tile','h-tile':'c-tile' };
+  if (!pairs[id]) return;
+  const src = document.getElementById(id);
+  const dst = document.getElementById(pairs[id]);
+  if (!src || !dst) return;
+  if (id.startsWith('h-')) {
+    if (/^#[0-9A-Fa-f]{6}$/.test(src.value)) dst.value = src.value;
+  } else {
+    dst.value = src.value.toUpperCase();
+  }
+}
+
+function setSelectValue(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  for (let opt of el.options) { if (opt.value === val) { el.value = val; return; } }
+}
+
+function setColorInput(pickerId, hexId, value) {
+  const p = document.getElementById(pickerId);
+  const h = document.getElementById(hexId);
+  if (p) p.value = value;
+  if (h) h.value = value.toUpperCase();
+}
+
+function syncHex(pickerId, hexId) {
+  const p = document.getElementById(pickerId);
+  const h = document.getElementById(hexId);
+  if (p && h) h.value = p.value.toUpperCase();
+  liveUpdate();
+}
+
+function syncPicker(hexId, pickerId) {
+  const h = document.getElementById(hexId);
+  const p = document.getElementById(pickerId);
+  if (h && p && /^#[0-9A-Fa-f]{6}$/.test(h.value)) p.value = h.value;
+  liveUpdate();
+}
+
+function previewFont() { liveUpdate(); }
 
 function applyPreset(i) {
   const p = PRESETS[i];
   currentTheme = { ...currentTheme, ...p, activePreset: i };
   buildThemeScreen();
+  liveUpdate();
 }
-
-function setColorInput(pickerId, hexId, value) {
-  document.getElementById(pickerId).value = value;
-  document.getElementById(hexId).value = value.toUpperCase();
-}
-
-function syncHex(pickerId, hexId) {
-  document.getElementById(hexId).value = document.getElementById(pickerId).value.toUpperCase();
-}
-
-function syncPicker(hexId, pickerId) {
-  const val = document.getElementById(hexId).value;
-  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-    document.getElementById(pickerId).value = val;
-  }
-}
-
-function previewFont() {}
 
 function applyTheme() {
-  // Read current color inputs
-  currentTheme.bg = document.getElementById('c-bg').value;
-  currentTheme.primary = document.getElementById('c-primary').value;
-  currentTheme.secondary = document.getElementById('c-secondary').value;
-  currentTheme.tile = document.getElementById('c-tile').value;
-  currentTheme.fontDisplay = document.getElementById('font-display').value;
-  currentTheme.fontBody = document.getElementById('font-body').value;
-  currentTheme.fontQuestion = document.getElementById('font-question').value;
-  currentTheme.boardTitle = document.getElementById('brand-board').value || 'GAME NIGHT';
-  currentTheme.homeTitle = document.getElementById('brand-title').value || 'Game Night';
-  currentTheme.homeSub = document.getElementById('brand-sub').value || '';
-
-  const root = document.documentElement;
-  root.style.setProperty('--theme-bg', currentTheme.bg);
-  root.style.setProperty('--theme-primary', currentTheme.primary);
-  root.style.setProperty('--theme-secondary', currentTheme.secondary);
-  root.style.setProperty('--theme-tile', currentTheme.tile);
-  root.style.setProperty('--theme-font-display', currentTheme.fontDisplay);
-  root.style.setProperty('--theme-font-body', currentTheme.fontBody);
-  root.style.setProperty('--theme-font-question', currentTheme.fontQuestion);
-
-  // Background
-  let bgStyle = currentTheme.bg;
-  if (currentTheme.bgImage) {
-    bgStyle = `url(${currentTheme.bgImage})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-  } else {
-    document.body.style.backgroundSize = '';
-    document.body.style.backgroundPosition = '';
-  }
-  document.body.style.background = bgStyle;
-
-  // Pattern overlay
-  applyPattern(currentTheme.bgPattern, currentTheme.primary);
-
-  // Apply colors to key elements
-  document.querySelectorAll('.screen').forEach(s => s.style.background = '');
-  document.querySelectorAll('#screen-title, #screen-setup, #screen-board, #screen-question, #screen-gameover, #screen-loading').forEach(s => {
-    s.style.background = currentTheme.bgImage ? 'transparent' : currentTheme.bg;
-  });
-
-  // Tiles
-  document.querySelectorAll('.tile:not(.used)').forEach(t => {
-    t.style.background = currentTheme.tile;
-    t.style.borderColor = currentTheme.primary;
-  });
-  document.querySelectorAll('.cat-header').forEach(t => {
-    t.style.background = currentTheme.primary;
-    t.style.color = currentTheme.secondary;
-  });
-  document.querySelectorAll('.tile-val').forEach(t => t.style.color = currentTheme.primary);
-
-  // Fonts
-  document.querySelectorAll('.board-title, #screen-title h1, #screen-gameover h2, #screen-setup h2').forEach(el => {
-    el.style.fontFamily = currentTheme.fontDisplay;
-  });
-  document.querySelectorAll('body').forEach(el => el.style.fontFamily = currentTheme.fontBody);
-  document.querySelectorAll('.q-text').forEach(el => el.style.fontFamily = currentTheme.fontQuestion);
-
-  // Branding
-  const boardTitleEl = document.getElementById('board-title-el');
-  if (boardTitleEl) boardTitleEl.textContent = currentTheme.boardTitle;
-  const homeTitleSpan = document.getElementById('home-title-span');
-  if (homeTitleSpan) homeTitleSpan.textContent = currentTheme.homeTitle;
-  const homeSubEl = document.getElementById('home-sub');
-  if (homeSubEl) homeSubEl.textContent = currentTheme.homeSub;
-
-  // Save to localStorage for persistence
-  try { localStorage.setItem('jeopardy-theme', JSON.stringify(currentTheme)); } catch(e) {}
-
+  const t = readInputs();
+  applySnapshot(t, true);
   const note = document.getElementById('theme-saved-note');
   note.classList.add('visible');
   setTimeout(() => note.classList.remove('visible'), 2000);
 }
 
 function applyPattern(pattern, color) {
-  let existing = document.getElementById('pattern-overlay');
-  if (!existing) {
-    existing = document.createElement('div');
-    existing.id = 'pattern-overlay';
-    existing.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.08;';
-    document.body.insertBefore(existing, document.body.firstChild);
+  let el = document.getElementById('pattern-overlay');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'pattern-overlay';
+    el.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.08;';
+    document.body.insertBefore(el, document.body.firstChild);
   }
   const patterns = {
     none: '',
@@ -1837,8 +2055,8 @@ function applyPattern(pattern, color) {
     waves: `repeating-linear-gradient(0deg, transparent, transparent 10px, ${color} 10px, ${color} 11px)`,
   };
   const sizes = { dots: '20px 20px', grid: '30px 30px', diagonal: '10px 10px', stars: '30px 30px', waves: '100% 100%', none: '' };
-  existing.style.backgroundImage = patterns[pattern] || '';
-  existing.style.backgroundSize = sizes[pattern] || '';
+  el.style.backgroundImage = patterns[pattern] || '';
+  el.style.backgroundSize = sizes[pattern] || '';
 }
 
 function handleBgUpload(event) {
@@ -1848,6 +2066,7 @@ function handleBgUpload(event) {
   reader.onload = e => {
     currentTheme.bgImage = e.target.result;
     document.getElementById('bg-upload-preview').textContent = 'Custom image set ✓';
+    liveUpdate();
   };
   reader.readAsDataURL(file);
 }
@@ -1856,16 +2075,13 @@ function clearBgImage() {
   currentTheme.bgImage = null;
   document.getElementById('bg-upload-preview').textContent = 'No image uploaded';
   document.getElementById('bg-upload').value = '';
+  liveUpdate();
 }
 
 function loadSavedTheme() {
-  try {
-    const saved = localStorage.getItem('jeopardy-theme');
-    if (saved) {
-      currentTheme = { ...currentTheme, ...JSON.parse(saved) };
-      applyTheme();
-    }
-  } catch(e) {}
+  // Always start with Game Night preset as default
+  try { localStorage.removeItem('jeopardy-theme'); } catch(e) {}
+  applySnapshot(currentTheme, false);
 }
 
 /* ─────────────── INIT ─────────────── */
