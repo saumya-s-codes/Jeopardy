@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Game Night Jeopardy</title>
-<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=Averia+Libre:ital,wght@0,400;0,700;1,400&family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&family=Averia+Libre:ital,wght@0,400;0,700;1,400&family=Anton&family=Pacifico&family=Space+Grotesk:wght@400;700&family=Playfair+Display:wght@700&family=Righteous&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,6 +22,17 @@
     --pink: #FFA3E8;
     --teal: #8BCAC6;
     --orange: #FF9900;
+
+    /* ── THEME VARS (overridden by theme system) ── */
+    --theme-bg: #FFDC03;
+    --theme-primary: #1a1a1a;
+    --theme-secondary: #ffffff;
+    --theme-accent: #FFDC03;
+    --theme-tile: #ffffff;
+    --theme-font-display: 'Anton', sans-serif;
+    --theme-font-body: 'Pixelify Sans', monospace;
+    --theme-font-question: 'Averia Libre', serif;
+    --theme-bg-image: none;
   }
 
   html, body {
@@ -658,6 +669,190 @@
     .edit-q-row input:last-child, .edit-q-row textarea:last-child { grid-column: 2; }
     #screen-gameover h2 { font-size: 52px; }
   }
+
+  /* ── THEME SCREEN ── */
+  #screen-theme {
+    background: var(--off-white);
+    padding: 24px;
+    align-items: center;
+    overflow-y: auto;
+  }
+  .theme-header {
+    width: 100%; max-width: 900px;
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 24px;
+  }
+  .theme-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 36px; color: var(--black); letter-spacing: 2px;
+  }
+  .theme-save-btn {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; border: none;
+    padding: 10px 22px; cursor: pointer; letter-spacing: 1px;
+    transition: background 0.12s;
+  }
+  .theme-save-btn:hover { background: #333; }
+  .theme-body {
+    width: 100%; max-width: 900px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .theme-section {
+    background: var(--white);
+    border: 3px solid var(--black);
+    padding: 20px;
+  }
+  .theme-section-title {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; letter-spacing: 3px;
+    text-transform: uppercase; color: rgba(0,0,0,0.5);
+    margin-bottom: 16px;
+  }
+
+  /* Presets */
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+  .preset-btn {
+    border: 3px solid transparent;
+    padding: 0; cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+    background: none;
+  }
+  .preset-btn:hover { transform: scale(1.04); }
+  .preset-btn.active { border-color: var(--black); }
+  .preset-swatch {
+    height: 64px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    font-family: 'Pixelify Sans', monospace;
+  }
+  .preset-label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 11px; letter-spacing: 1px;
+    padding: 6px; text-align: center;
+    background: var(--off-white);
+    color: var(--black);
+  }
+
+  /* Color pickers */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .color-item {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .color-item label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+    text-transform: uppercase;
+  }
+  .color-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .color-row input[type="color"] {
+    width: 40px; height: 40px;
+    border: 2px solid var(--black);
+    padding: 2px; cursor: pointer;
+    background: none;
+  }
+  .color-hex {
+    font-family: 'Courier New', monospace;
+    font-size: 13px; border: 2px solid #ccc;
+    padding: 6px 8px; width: 90px;
+    outline: none; text-transform: uppercase;
+  }
+  .color-hex:focus { border-color: var(--black); }
+
+  /* Fonts */
+  .font-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .font-group { display: flex; flex-direction: column; gap: 6px; }
+  .font-group label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+    text-transform: uppercase;
+  }
+  .font-select {
+    font-size: 14px; border: 2px solid #ccc;
+    padding: 8px; outline: none; cursor: pointer;
+    background: var(--white);
+    transition: border-color 0.12s;
+  }
+  .font-select:focus { border-color: var(--black); }
+
+  /* Branding */
+  .brand-grid {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .brand-item { display: flex; flex-direction: column; gap: 6px; }
+  .brand-item label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 11px; letter-spacing: 1px; color: rgba(0,0,0,0.5);
+    text-transform: uppercase;
+  }
+  .brand-item input {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 16px; border: 2px solid #ccc;
+    padding: 10px; outline: none;
+    transition: border-color 0.12s;
+  }
+  .brand-item input:focus { border-color: var(--black); }
+
+  /* Background */
+  .bg-options {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .bg-patterns {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+  .bg-pattern-btn {
+    border: 3px solid transparent;
+    padding: 0; cursor: pointer;
+    background: none; transition: border-color 0.15s;
+  }
+  .bg-pattern-btn.active { border-color: var(--black); }
+  .bg-pattern-swatch {
+    height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .bg-pattern-label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    padding: 4px; text-align: center;
+    background: var(--off-white); color: var(--black);
+  }
+  .bg-upload-row {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .bg-upload-btn {
+    background: var(--black); color: var(--yellow);
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 13px; border: none;
+    padding: 10px 20px; cursor: pointer; letter-spacing: 1px;
+  }
+  .bg-upload-preview {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 12px; color: rgba(0,0,0,0.5);
+  }
+  .theme-saved-note {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px; color: var(--green-dark);
+    letter-spacing: 1px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .theme-saved-note.visible { opacity: 1; }
 </style>
 </head>
 <body>
@@ -677,8 +872,8 @@
     <path d="M40 260 L40 40 L260 40" stroke="black" stroke-width="48" stroke-linecap="square" fill="none"/>
     <path d="M200 40 L260 40 L260 100" stroke="black" stroke-width="48" stroke-linecap="square" fill="none"/>
   </svg>
-  <h1>Welcome to<span>Game Night</span></h1>
-  <div class="sub">A SAUMYA STUDIO PRODUCTION</div>
+  <h1 id="home-title">Welcome to<span id="home-title-span">Game Night</span></h1>
+  <div class="sub" id="home-sub">A SAUMYA STUDIO PRODUCTION</div>
   <button class="start-btn" onclick="showScreen('setup')">START GAME</button>
 </div>
 
@@ -703,13 +898,14 @@
 <!-- BOARD SCREEN -->
 <div id="screen-board" class="screen">
   <div class="board-header">
-    <div class="board-title">GAME NIGHT</div>
+    <div class="board-title" id="board-title-el">GAME NIGHT</div>
     <div class="scoreboard-area" id="scoreboard-area"></div>
   </div>
   <div class="board-grid" id="board-grid"></div>
   <div class="board-footer">
     <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     <div class="board-btns">
+      <button class="edit-link" onclick="showScreen('theme')">🎨 THEME</button>
       <button class="edit-link" onclick="showScreen('edit')">✎ EDIT</button>
       <button class="reset-link" onclick="showGameOver()">⚑ FINISH</button>
     </div>
@@ -767,6 +963,132 @@
     <div style="display:flex; align-items:center; gap:16px;">
       <div class="edit-saved-note" id="edit-saved-note">Saved! ✦</div>
     </div>
+  </div>
+</div>
+
+
+<!-- THEME SCREEN -->
+<div id="screen-theme" class="screen">
+  <div class="theme-header">
+    <div class="theme-title">🎨 THEME</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="theme-saved-note" id="theme-saved-note">Applied! ✦</div>
+      <button class="theme-save-btn" onclick="applyTheme(); showScreen('board')">✓ SAVE & BACK</button>
+    </div>
+  </div>
+  <div class="theme-body">
+
+    <!-- PRESETS -->
+    <div class="theme-section">
+      <div class="theme-section-title">✦ Presets</div>
+      <div class="preset-grid" id="preset-grid"></div>
+    </div>
+
+    <!-- COLORS -->
+    <div class="theme-section">
+      <div class="theme-section-title">✦ Colors</div>
+      <div class="color-grid">
+        <div class="color-item">
+          <label>Background</label>
+          <div class="color-row">
+            <input type="color" id="c-bg" oninput="syncHex('c-bg','h-bg')">
+            <input type="text" class="color-hex" id="h-bg" maxlength="7" oninput="syncPicker('h-bg','c-bg')">
+          </div>
+        </div>
+        <div class="color-item">
+          <label>Primary (text & tiles)</label>
+          <div class="color-row">
+            <input type="color" id="c-primary" oninput="syncHex('c-primary','h-primary')">
+            <input type="text" class="color-hex" id="h-primary" maxlength="7" oninput="syncPicker('h-primary','c-primary')">
+          </div>
+        </div>
+        <div class="color-item">
+          <label>Secondary (tile text)</label>
+          <div class="color-row">
+            <input type="color" id="c-secondary" oninput="syncHex('c-secondary','h-secondary')">
+            <input type="text" class="color-hex" id="h-secondary" maxlength="7" oninput="syncPicker('h-secondary','c-secondary')">
+          </div>
+        </div>
+        <div class="color-item">
+          <label>Tile background</label>
+          <div class="color-row">
+            <input type="color" id="c-tile" oninput="syncHex('c-tile','h-tile')">
+            <input type="text" class="color-hex" id="h-tile" maxlength="7" oninput="syncPicker('h-tile','c-tile')">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FONTS -->
+    <div class="theme-section">
+      <div class="theme-section-title">✦ Fonts</div>
+      <div class="font-grid">
+        <div class="font-group">
+          <label>Display (titles)</label>
+          <select class="font-select" id="font-display" onchange="previewFont()">
+            <option value="'Anton', sans-serif">Anton — Bold Display</option>
+            <option value="'Righteous', cursive">Righteous — Funky Bold</option>
+            <option value="'Playfair Display', serif">Playfair Display — Elegant</option>
+            <option value="'Pacifico', cursive">Pacifico — Handwritten</option>
+            <option value="'Space Grotesk', sans-serif">Space Grotesk — Modern</option>
+          </select>
+        </div>
+        <div class="font-group">
+          <label>Body (UI labels)</label>
+          <select class="font-select" id="font-body" onchange="previewFont()">
+            <option value="'Pixelify Sans', monospace">Pixelify Sans — Pixel</option>
+            <option value="'Space Grotesk', sans-serif">Space Grotesk — Modern</option>
+            <option value="'Righteous', cursive">Righteous — Funky</option>
+            <option value="'Pacifico', cursive">Pacifico — Handwritten</option>
+            <option value="'Courier New', monospace">Courier New — Typewriter</option>
+          </select>
+        </div>
+        <div class="font-group">
+          <label>Questions</label>
+          <select class="font-select" id="font-question" onchange="previewFont()">
+            <option value="'Averia Libre', serif">Averia Libre — Quirky Serif</option>
+            <option value="'Playfair Display', serif">Playfair Display — Elegant</option>
+            <option value="'Space Grotesk', sans-serif">Space Grotesk — Modern</option>
+            <option value="'Pacifico', cursive">Pacifico — Handwritten</option>
+            <option value="'Courier New', monospace">Courier New — Typewriter</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANDING -->
+    <div class="theme-section">
+      <div class="theme-section-title">✦ Branding</div>
+      <div class="brand-grid">
+        <div class="brand-item">
+          <label>Board title (shown during game)</label>
+          <input type="text" id="brand-board" placeholder="GAME NIGHT" maxlength="30">
+        </div>
+        <div class="brand-item">
+          <label>Game name (shown on home screen)</label>
+          <input type="text" id="brand-title" placeholder="Game Night" maxlength="40">
+        </div>
+        <div class="brand-item">
+          <label>Home screen subtitle</label>
+          <input type="text" id="brand-sub" placeholder="A SAUMYA STUDIO PRODUCTION" maxlength="50">
+        </div>
+      </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="theme-section">
+      <div class="theme-section-title">✦ Background</div>
+      <div class="bg-options">
+        <div class="bg-patterns" id="bg-patterns"></div>
+        <div class="bg-upload-row">
+          <button class="bg-upload-btn" onclick="document.getElementById('bg-upload').click()">⬆ Upload Image</button>
+          <input type="file" id="bg-upload" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
+          <div class="bg-upload-preview" id="bg-upload-preview">No image uploaded</div>
+          <button class="bg-upload-btn" style="background:#666" onclick="clearBgImage()">✕ Clear Image</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -894,6 +1216,7 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   if (name === 'edit') buildEditScreen();
+  if (name === 'theme') buildThemeScreen();
 }
 
 /* ─────────────── BOARD ─────────────── */
@@ -1311,11 +1634,246 @@ function launchConfetti() {
   drawConfetti();
 }
 
+
+/* ─────────────── THEME SYSTEM ─────────────── */
+const PRESETS = [
+  { name: 'Game Night', bg: '#FFDC03', primary: '#1a1a1a', secondary: '#ffffff', tile: '#ffffff', fontDisplay: "'Anton', sans-serif", fontBody: "'Pixelify Sans', monospace", fontQuestion: "'Averia Libre', serif" },
+  { name: 'Midnight', bg: '#0f0f23', primary: '#e0e0ff', secondary: '#0f0f23', tile: '#1a1a3e', fontDisplay: "'Anton', sans-serif", fontBody: "'Space Grotesk', sans-serif", fontQuestion: "'Playfair Display', serif" },
+  { name: 'Bubblegum', bg: '#ffb3d9', primary: '#3d0026', secondary: '#fff0f7', tile: '#fff0f7', fontDisplay: "'Pacifico', cursive", fontBody: "'Pixelify Sans', monospace", fontQuestion: "'Averia Libre', serif" },
+  { name: 'Forest', bg: '#1a3a2a', primary: '#d4edda', secondary: '#1a3a2a', tile: '#2d5a3d', fontDisplay: "'Playfair Display', serif", fontBody: "'Space Grotesk', sans-serif", fontQuestion: "'Playfair Display', serif" },
+  { name: 'Neon', bg: '#0a0a0a', primary: '#00ffcc', secondary: '#0a0a0a', tile: '#111111', fontDisplay: "'Righteous', cursive", fontBody: "'Space Grotesk', sans-serif", fontQuestion: "'Space Grotesk', sans-serif" },
+  { name: 'Cream', bg: '#F5F0E8', primary: '#2c2c2c', secondary: '#ffffff', tile: '#ffffff', fontDisplay: "'Playfair Display', serif", fontBody: "'Space Grotesk', sans-serif", fontQuestion: "'Playfair Display', serif" },
+];
+
+const BG_PATTERNS = [
+  { name: 'None', icon: '○', value: 'none' },
+  { name: 'Dots', icon: '⠿', value: 'dots' },
+  { name: 'Grid', icon: '▦', value: 'grid' },
+  { name: 'Diagonal', icon: '⟋', value: 'diagonal' },
+  { name: 'Stars', icon: '✦', value: 'stars' },
+  { name: 'Waves', icon: '〰', value: 'waves' },
+];
+
+let currentTheme = {
+  bg: '#FFDC03', primary: '#1a1a1a', secondary: '#ffffff', tile: '#ffffff',
+  fontDisplay: "'Anton', sans-serif",
+  fontBody: "'Pixelify Sans', monospace",
+  fontQuestion: "'Averia Libre', serif",
+  bgPattern: 'none',
+  bgImage: null,
+  boardTitle: 'GAME NIGHT',
+  homeTitle: 'Game Night',
+  homeTitleSpan: 'Game Night',
+  homeSub: 'A SAUMYA STUDIO PRODUCTION',
+  activePreset: 0
+};
+
+function buildThemeScreen() {
+  // Presets
+  const pg = document.getElementById('preset-grid');
+  pg.innerHTML = '';
+  PRESETS.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'preset-btn' + (currentTheme.activePreset === i ? ' active' : '');
+    btn.innerHTML = `
+      <div class="preset-swatch" style="background:${p.bg};color:${p.primary}">${p.name}</div>
+      <div class="preset-label">${p.name}</div>`;
+    btn.onclick = () => applyPreset(i);
+    pg.appendChild(btn);
+  });
+
+  // BG patterns
+  const bgp = document.getElementById('bg-patterns');
+  bgp.innerHTML = '';
+  BG_PATTERNS.forEach(pat => {
+    const btn = document.createElement('button');
+    btn.className = 'bg-pattern-btn' + (currentTheme.bgPattern === pat.value ? ' active' : '');
+    btn.innerHTML = `
+      <div class="bg-pattern-swatch" style="background:#eee">${pat.icon}</div>
+      <div class="bg-pattern-label">${pat.name}</div>`;
+    btn.onclick = () => {
+      currentTheme.bgPattern = pat.value;
+      document.querySelectorAll('.bg-pattern-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    bgp.appendChild(btn);
+  });
+
+  // Sync color inputs
+  setColorInput('c-bg', 'h-bg', currentTheme.bg);
+  setColorInput('c-primary', 'h-primary', currentTheme.primary);
+  setColorInput('c-secondary', 'h-secondary', currentTheme.secondary);
+  setColorInput('c-tile', 'h-tile', currentTheme.tile);
+
+  // Fonts
+  document.getElementById('font-display').value = currentTheme.fontDisplay;
+  document.getElementById('font-body').value = currentTheme.fontBody;
+  document.getElementById('font-question').value = currentTheme.fontQuestion;
+
+  // Branding
+  document.getElementById('brand-board').value = currentTheme.boardTitle;
+  document.getElementById('brand-title').value = currentTheme.homeTitle || 'Game Night';
+  document.getElementById('brand-sub').value = currentTheme.homeSub;
+
+  // Upload preview
+  document.getElementById('bg-upload-preview').textContent = currentTheme.bgImage ? 'Custom image set ✓' : 'No image uploaded';
+}
+
+function applyPreset(i) {
+  const p = PRESETS[i];
+  currentTheme = { ...currentTheme, ...p, activePreset: i };
+  buildThemeScreen();
+}
+
+function setColorInput(pickerId, hexId, value) {
+  document.getElementById(pickerId).value = value;
+  document.getElementById(hexId).value = value.toUpperCase();
+}
+
+function syncHex(pickerId, hexId) {
+  document.getElementById(hexId).value = document.getElementById(pickerId).value.toUpperCase();
+}
+
+function syncPicker(hexId, pickerId) {
+  const val = document.getElementById(hexId).value;
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+    document.getElementById(pickerId).value = val;
+  }
+}
+
+function previewFont() {}
+
+function applyTheme() {
+  // Read current color inputs
+  currentTheme.bg = document.getElementById('c-bg').value;
+  currentTheme.primary = document.getElementById('c-primary').value;
+  currentTheme.secondary = document.getElementById('c-secondary').value;
+  currentTheme.tile = document.getElementById('c-tile').value;
+  currentTheme.fontDisplay = document.getElementById('font-display').value;
+  currentTheme.fontBody = document.getElementById('font-body').value;
+  currentTheme.fontQuestion = document.getElementById('font-question').value;
+  currentTheme.boardTitle = document.getElementById('brand-board').value || 'GAME NIGHT';
+  currentTheme.homeTitle = document.getElementById('brand-title').value || 'Game Night';
+  currentTheme.homeSub = document.getElementById('brand-sub').value || '';
+
+  const root = document.documentElement;
+  root.style.setProperty('--theme-bg', currentTheme.bg);
+  root.style.setProperty('--theme-primary', currentTheme.primary);
+  root.style.setProperty('--theme-secondary', currentTheme.secondary);
+  root.style.setProperty('--theme-tile', currentTheme.tile);
+  root.style.setProperty('--theme-font-display', currentTheme.fontDisplay);
+  root.style.setProperty('--theme-font-body', currentTheme.fontBody);
+  root.style.setProperty('--theme-font-question', currentTheme.fontQuestion);
+
+  // Background
+  let bgStyle = currentTheme.bg;
+  if (currentTheme.bgImage) {
+    bgStyle = `url(${currentTheme.bgImage})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+  } else {
+    document.body.style.backgroundSize = '';
+    document.body.style.backgroundPosition = '';
+  }
+  document.body.style.background = bgStyle;
+
+  // Pattern overlay
+  applyPattern(currentTheme.bgPattern, currentTheme.primary);
+
+  // Apply colors to key elements
+  document.querySelectorAll('.screen').forEach(s => s.style.background = '');
+  document.querySelectorAll('#screen-title, #screen-setup, #screen-board, #screen-question, #screen-gameover, #screen-loading').forEach(s => {
+    s.style.background = currentTheme.bgImage ? 'transparent' : currentTheme.bg;
+  });
+
+  // Tiles
+  document.querySelectorAll('.tile:not(.used)').forEach(t => {
+    t.style.background = currentTheme.tile;
+    t.style.borderColor = currentTheme.primary;
+  });
+  document.querySelectorAll('.cat-header').forEach(t => {
+    t.style.background = currentTheme.primary;
+    t.style.color = currentTheme.secondary;
+  });
+  document.querySelectorAll('.tile-val').forEach(t => t.style.color = currentTheme.primary);
+
+  // Fonts
+  document.querySelectorAll('.board-title, #screen-title h1, #screen-gameover h2, #screen-setup h2').forEach(el => {
+    el.style.fontFamily = currentTheme.fontDisplay;
+  });
+  document.querySelectorAll('body').forEach(el => el.style.fontFamily = currentTheme.fontBody);
+  document.querySelectorAll('.q-text').forEach(el => el.style.fontFamily = currentTheme.fontQuestion);
+
+  // Branding
+  const boardTitleEl = document.getElementById('board-title-el');
+  if (boardTitleEl) boardTitleEl.textContent = currentTheme.boardTitle;
+  const homeTitleSpan = document.getElementById('home-title-span');
+  if (homeTitleSpan) homeTitleSpan.textContent = currentTheme.homeTitle;
+  const homeSubEl = document.getElementById('home-sub');
+  if (homeSubEl) homeSubEl.textContent = currentTheme.homeSub;
+
+  // Save to localStorage for persistence
+  try { localStorage.setItem('jeopardy-theme', JSON.stringify(currentTheme)); } catch(e) {}
+
+  const note = document.getElementById('theme-saved-note');
+  note.classList.add('visible');
+  setTimeout(() => note.classList.remove('visible'), 2000);
+}
+
+function applyPattern(pattern, color) {
+  let existing = document.getElementById('pattern-overlay');
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.id = 'pattern-overlay';
+    existing.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.08;';
+    document.body.insertBefore(existing, document.body.firstChild);
+  }
+  const patterns = {
+    none: '',
+    dots: `radial-gradient(circle, ${color} 1px, transparent 1px)`,
+    grid: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,
+    diagonal: `repeating-linear-gradient(45deg, ${color} 0, ${color} 1px, transparent 0, transparent 50%)`,
+    stars: `radial-gradient(circle, ${color} 1px, transparent 1px)`,
+    waves: `repeating-linear-gradient(0deg, transparent, transparent 10px, ${color} 10px, ${color} 11px)`,
+  };
+  const sizes = { dots: '20px 20px', grid: '30px 30px', diagonal: '10px 10px', stars: '30px 30px', waves: '100% 100%', none: '' };
+  existing.style.backgroundImage = patterns[pattern] || '';
+  existing.style.backgroundSize = sizes[pattern] || '';
+}
+
+function handleBgUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentTheme.bgImage = e.target.result;
+    document.getElementById('bg-upload-preview').textContent = 'Custom image set ✓';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearBgImage() {
+  currentTheme.bgImage = null;
+  document.getElementById('bg-upload-preview').textContent = 'No image uploaded';
+  document.getElementById('bg-upload').value = '';
+}
+
+function loadSavedTheme() {
+  try {
+    const saved = localStorage.getItem('jeopardy-theme');
+    if (saved) {
+      currentTheme = { ...currentTheme, ...JSON.parse(saved) };
+      applyTheme();
+    }
+  } catch(e) {}
+}
+
 /* ─────────────── INIT ─────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   setPlayerCount(2);
   buildPlayerNameInputs();
   loadFromSupabase();
+  loadSavedTheme();
 });
 </script>
 </body>
