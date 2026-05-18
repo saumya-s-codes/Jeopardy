@@ -1169,24 +1169,89 @@ function buildEditQuestionList() {
   });
 }
 
-function saveEdits() {
-  // Save reactions
-  document.querySelectorAll('#edit-reactions-grid input').forEach(inp => {
-    QUESTIONS[parseInt(inp.dataset.col)][parseInt(inp.dataset.row)].fun = inp.value;
-  });
-  // Save categories (local display only)
-  document.querySelectorAll('#edit-categories-row input').forEach(inp => {
-    CATEGORIES[parseInt(inp.dataset.catIdx)] = inp.value;
-  });
-  // Save questions/answers (local only)
-  document.querySelectorAll('#edit-q-list textarea, #edit-q-list input[data-field]').forEach(inp => {
-    QUESTIONS[parseInt(inp.dataset.col)][parseInt(inp.dataset.row)][inp.dataset.field] = inp.value;
-  });
+async function saveEdits() {
+  const SUPABASE_URL = 'https://ljjoyymeoeeexdciszas.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_eB99f8drohy2kMNpLUFaZg_xC21f5x2';
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
 
   const note = document.getElementById('edit-saved-note');
+  note.textContent = 'Saving...';
   note.classList.add('visible');
-  setTimeout(() => note.classList.remove('visible'), 2000);
-  buildBoard();
+
+  try {
+    // Collect all updates
+    const updates = [];
+
+    // Category renames
+    document.querySelectorAll('#edit-categories-row input').forEach(inp => {
+      const idx = parseInt(inp.dataset.catIdx);
+      const oldCat = CATEGORIES[idx];
+      const newCat = inp.value.trim();
+      if (newCat && newCat !== oldCat) {
+        updates.push(
+          fetch(SUPABASE_URL + '/rest/v1/questions?category=eq.' + encodeURIComponent(oldCat), {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ category: newCat })
+          })
+        );
+        CATEGORIES[idx] = newCat;
+      }
+    });
+
+    // Questions and answers
+    document.querySelectorAll('#edit-q-list textarea, #edit-q-list input[data-field]').forEach(inp => {
+      const ci = parseInt(inp.dataset.col);
+      const ri = parseInt(inp.dataset.row);
+      const field = inp.dataset.field;
+      const q = QUESTIONS[ci][ri];
+      const newVal = inp.value;
+      const dbField = field === 'q' ? 'question' : 'answer';
+      if (newVal !== q[field]) {
+        updates.push(
+          fetch(SUPABASE_URL + '/rest/v1/questions?category=eq.' + encodeURIComponent(CATEGORIES[ci]) + '&value=eq.' + q.val, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ [dbField]: newVal })
+          })
+        );
+        QUESTIONS[ci][ri][field] = newVal;
+      }
+    });
+
+    // Reactions
+    document.querySelectorAll('#edit-reactions-grid input').forEach(inp => {
+      const ci = parseInt(inp.dataset.col);
+      const ri = parseInt(inp.dataset.row);
+      const q = QUESTIONS[ci][ri];
+      const newVal = inp.value;
+      if (newVal !== q.fun) {
+        updates.push(
+          fetch(SUPABASE_URL + '/rest/v1/questions?category=eq.' + encodeURIComponent(CATEGORIES[ci]) + '&value=eq.' + q.val, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ reaction: newVal })
+          })
+        );
+        QUESTIONS[ci][ri].fun = newVal;
+      }
+    });
+
+    await Promise.all(updates);
+
+    note.textContent = 'Saved! ✦';
+    setTimeout(() => note.classList.remove('visible'), 2000);
+    buildBoard();
+  } catch (err) {
+    console.error('Save error:', err);
+    note.textContent = 'Save failed: ' + err.message;
+    setTimeout(() => note.classList.remove('visible'), 3000);
+  }
 }
 
 /* ─────────────── CONFETTI ─────────────── */
