@@ -790,7 +790,7 @@ async function loadFromSupabase() {
     const SUPABASE_KEY = 'sb_publishable_eB99f8drohy2kMNpLUFaZg_xC21f5x2';
 
     const res = await fetch(
-      SUPABASE_URL + '/rest/v1/questions?select=*&order=value.asc',
+      SUPABASE_URL + '/rest/v1/questions?select=*&order=display_order.asc,value.asc',
       {
         headers: {
           'apikey': SUPABASE_KEY,
@@ -808,7 +808,7 @@ async function loadFromSupabase() {
     const data = await res.json();
     if (!data || data.length === 0) throw new Error('No questions found in the database.');
 
-    const catOrder = [...new Set(data.map(r => r.category))];
+    const catOrder = [...new Map(data.map(r => [r.category, r.display_order])).entries()].sort((a,b) => a[1]-b[1]).map(e => e[0]);
     CATEGORIES = catOrder;
     QUESTIONS = catOrder.map(cat =>
       data
